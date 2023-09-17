@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <title>@yield('title') - Octabake</title>
+    <title>@yield('title') - Octobake</title>
     <link rel="shortcut icon" href="{{ asset('logo.png') }}">
     <link rel="stylesheet" id="css-main" href="{{ asset('css/oneui.min.css') }}">
     @yield('head')
@@ -19,7 +19,7 @@
             <span class="smini-visible">
               <i class="fa fa-circle-notch text-success"></i>
             </span>
-            <span class="smini-hide fs-5 tracking-wider">Octabake</span>
+            <span class="smini-hide fs-5 tracking-wider">Octobake</span>
           </a>
           <!-- END Logo -->
 
@@ -161,7 +161,7 @@
         <div class="content py-3">
           <div class="row fs-sm">
             <div class="col-sm-6 order-sm-2 py-1 text-center text-sm-end">
-              Create with <i class="fa fa-heart text-danger"></i> by <a class="fw-semibold" role="button">Octabake</a>
+              Create with <i class="fa fa-heart text-danger"></i> by <a class="fw-semibold" role="button">Octobake</a>
             </div>
             <div class="col-sm-6 order-sm-1 py-1 text-center text-sm-start">
               <a class="fw-semibold" href="https://1.envato.market/AVD6j" target="_blank">OneUI 5.7</a> &copy; <span data-toggle="year-copy"></span>

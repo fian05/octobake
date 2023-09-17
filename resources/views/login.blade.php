@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <title>Login - Octabake</title>
+    <title>Login - Octobake</title>
     <link rel="shortcut icon" href="{{ asset('logo.png') }}">
     <link rel="stylesheet" id="css-main" href="{{ asset('css/oneui.min.css') }}">
   </head>
@@ -25,9 +25,9 @@
                     </div>
                     <div class="block-content">
                       <div class="p-sm-3 px-lg-4 px-xxl-5 py-lg-5 text-center">
-                        <img class="img-avatar img-avatar96" src="{{ asset('Logo Octabake.png') }}" alt="">
+                        <img class="img-avatar img-avatar96" src="{{ asset('Logo Octobake.png') }}" alt="">
                         <p class="fw-semibold my-2">
-                          Octabake
+                          Octobake
                         </p>
                         <!-- Unlock Form -->
                         <form class="js-validation-lock mt-4" action="{{ route('login_proses') }}" method="POST">
@@ -54,7 +54,7 @@
                 </div>
               </div>
               <div class="fs-sm text-center text-white">
-                <span class="fw-medium">Octabake</span> &copy; <span data-toggle="year-copy"></span>
+                <span class="fw-medium">Octobake</span> &copy; <span data-toggle="year-copy"></span>
               </div>
             </div>
           </div>
