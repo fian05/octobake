@@ -5,21 +5,11 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <title>Login - Octabake</title>
     <link rel="shortcut icon" href="{{ asset('logo.png') }}">
-    <!-- END Icons -->
-
-    <!-- Stylesheets -->
-    <!-- OneUI framework -->
     <link rel="stylesheet" id="css-main" href="{{ asset('css/oneui.min.css') }}">
-
-    <!-- You can include a specific file from css/themes/ folder to alter the default color theme of the template. eg: -->
-    <!-- <link rel="stylesheet" id="css-theme" href="assets/css/themes/amethyst.min.css"> -->
-    <!-- END Stylesheets -->
   </head>
-
   <body>
     <!-- Page Container -->
     <div id="page-container">
-
       <!-- Main Container -->
       <main id="main-container">
         <!-- Page Content -->
@@ -39,9 +29,9 @@
                         <p class="fw-semibold my-2">
                           Octabake
                         </p>
-
                         <!-- Unlock Form -->
-                        <form class="js-validation-lock mt-4" action="be_pages_auth_all.html" method="POST">
+                        <form class="js-validation-lock mt-4" action="{{ route('login_proses') }}" method="POST">
+                            @csrf
                             <div class="mb-4">
                                 <input type="text" class="form-control form-control-lg form-control-alt" id="username" name="username" placeholder="Username.." autocomplete="off">
                               </div>
@@ -74,22 +64,9 @@
       <!-- END Main Container -->
     </div>
     <!-- END Page Container -->
-
-    <!--
-        OneUI JS
-
-        Core libraries and functionality
-        webpack is putting everything together at assets/_js/main/app.js
-    -->
     <script src="{{ asset('js/oneui.app.min.js') }}"></script>
-
-    <!-- jQuery (required for jQuery Validation plugin) -->
     <script src="{{ asset('js/lib/jquery.min.js') }}"></script>
-
-    <!-- Page JS Plugins -->
     <script src="{{ asset('js/plugins/jquery-validation/jquery.validate.min.js') }}"></script>
-
-    <!-- Page JS Code -->
     <script src="{{ asset('js/pages/op_auth_lock.min.js') }}"></script>
   </body>
 </html>
