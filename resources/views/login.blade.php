@@ -13,7 +13,7 @@
       <!-- Main Container -->
       <main id="main-container">
         <!-- Page Content -->
-        <div class="bg-image" style="background-image: url({{ asset('media/photos/photo14@2x.jpg') }});">
+        <div class="bg-image" style="background-image: url({{ asset('media/photos/bg@login.jpg') }});">
           <div class="hero-static d-flex align-items-center bg-primary-dark-op">
             <div class="content">
               <div class="row justify-content-center push">
