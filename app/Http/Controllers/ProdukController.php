@@ -24,6 +24,7 @@ class ProdukController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'nama_produk' => 'required',
+            'stok_produk' => 'required|numeric',
             'harga_produk' => 'required|numeric',
             'gambar_produk' => 'required',
         ]);
@@ -43,6 +44,7 @@ class ProdukController extends Controller
             $request->file('gambar_produk')->move($folderPath, $namaFile);
             Produk::create([
                 "nama_produk" => $request->nama_produk,
+                "stok_produk" => $request->stok_produk,
                 "harga_produk" => $request->harga_produk,
                 "gambar_produk" => $namaFile,
             ]);
@@ -59,6 +61,7 @@ class ProdukController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'nama_produk' => 'required',
+            'stok_produk' => 'required|numeric',
             'harga_produk' => 'required|numeric',
             'id' => 'required',
             'gambar' => 'required',
@@ -82,12 +85,14 @@ class ProdukController extends Controller
                     $request->file('gambar_produk')->move($folderPath, $namaFile);
                     $produk->update([
                         'nama_produk' => $request->nama_produk,
+                        'stok_produk' => $request->stok_produk,
                         'harga_produk' => $request->harga_produk,
                         'gambar_produk' => $namaFile,
                     ]);
                 } else {
                     $produk->update([
                         'nama_produk' => $request->nama_produk,
+                        'stok_produk' => $request->stok_produk,
                         'harga_produk' => $request->harga_produk,
                         'gambar_produk' => $request->gambar,
                     ]);

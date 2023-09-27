@@ -27,6 +27,11 @@
                         <i class="nav-main-link-icon fa fa-bread-slice"></i>
                         <span class="nav-main-link-name">Produk</span>
                     </a>
+                    <li class="nav-main-heading">Transaksi</li>
+                    <a class="nav-main-link" href="{{ route('pembayaran_view') }}">
+                        <i class="nav-main-link-icon fa fa-money-check-dollar"></i>
+                        <span class="nav-main-link-name">Pembayaran</span>
+                    </a>
                 </li>
             </ul>
         </div>

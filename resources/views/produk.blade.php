@@ -53,6 +53,7 @@
                                 <tr>
                                     <th>No.</th>
                                     <th>Nama Produk</th>
+                                    <th>Stok</th>
                                     <th>Harga Produk</th>
                                     <th>Gambar Produk</th>
                                     <th>Aksi</th>
@@ -63,6 +64,15 @@
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
                                         <td>{{ $produk->nama_produk }}</td>
+                                        <td>
+                                            @if ($produk->stok_produk < 10 && $produk->stok_produk != 0)
+                                                <span class="text-warning">{{ number_format($produk->stok_produk, 0, ',', '.') }}</span>
+                                            @elseif ($produk->stok_produk == 0)
+                                                <span class="text-danger">{{ number_format($produk->stok_produk, 0, ',', '.') }}</span>
+                                            @else
+                                            <span class="text-success">{{ number_format($produk->stok_produk, 0, ',', '.') }}</span>
+                                            @endif
+                                        </td>
                                         <td>{{ $produk->harga_produk }}</td>
                                         <td><img src="{{ asset('media/photos/upload/'.$produk->gambar_produk) }}" width="150px" alt="Gambar produk {{ $produk->nama_produk }}"></td>
                                         <td>
@@ -74,7 +84,7 @@
                                                     <form id="delete-form-{{ $produk->id }}" action="{{ route('produk_hapus', $produk->id) }}" method="POST">
                                                         @csrf
                                                         @method('DELETE')
-                                                        <input type="text" name="produkHps" value="{{ $produk->nama }}" hidden>
+                                                        <input type="text" name="produkHps" value="{{ $produk->nama_produk }}" hidden>
                                                         <a role="button" class="dropdown-item text-danger delete-link" id="delete-link-{{ $produk->id }}" title="Hapus Produk"><i class="fa fa-trash"></i> Hapus Produk</a>
                                                     </form>
                                                 </div>
@@ -118,6 +128,10 @@
                                 <label>Gambar Produk <small class="text-danger">*</small></label>
                                 <input type="file" class="form-control form-control-alt form-control-lg" accept="image/png, image/jpg, image/jpeg" name="gambar_produk" placeholder=" " autocomplete="off" required>
                             </div>
+                            <div class="col-md mb-3">
+                                <label>Stok Produk <small class="text-danger">*</small></label>
+                                <input type="text" class="form-control form-control-alt form-control-lg" name="stok_produk" id="stok_produk" placeholder=" " autocomplete="off" required>
+                            </div>
                         </div>
                         <small class="fst-italic"><span class="text-danger">*</span> Wajib Diisi</small>
                     </div>
@@ -160,6 +174,10 @@
                                 <input type="file" class="form-control form-control-alt form-control-lg" accept="image/png, image/jpg, image/jpeg" name="gambar_produk" placeholder=" " autocomplete="off">
                                 <p><a href="" target="_blank" id="namaFile"></a></p>
                             </div>
+                            <div class="col-md mb-3">
+                                <label>Stok Produk <small class="text-danger">*</small></label>
+                                <input type="text" class="form-control form-control-alt form-control-lg" name="stok_produk" id="stok_produk2" placeholder=" " autocomplete="off" required>
+                            </div>
                         </div>
                         <small class="fst-italic"><span class="text-danger">*</span> Wajib Diisi</small>
                     </div>
@@ -180,7 +198,7 @@
         $(document).ready(function() {
             $('.table').DataTable({
                 columnDefs: [
-                    { orderable: false, targets: [3, 4] },
+                    { orderable: false, targets: [4, 5] },
                 ],
                 language: {
                     lengthMenu: "Tampilkan _MENU_ data per halaman",
@@ -202,7 +220,14 @@
         inputHarga.addEventListener('input', function () {
             this.value = formatAngka(this.value);
         });
+        var inputStok = document.getElementById('stok_produk');
+        inputStok.addEventListener('input', function () {
+            this.value = formatAngka(this.value);
+        });
         function formatAngka(angka) {
+            if (typeof angka !== 'string') {
+                angka = angka.toString(); // Convert to string if it's not already
+            }
             if (!angka) return '';
             angka = angka.replace(/[^\d,]/g, ''); // Hapus karakter selain angka dan koma
             angka = angka.replace(/,/g, ''); // Hapus semua koma yang ada
@@ -223,13 +248,19 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     inputHarga.value = inputHarga.value.replace(/[^\d]/g, '');
+                    inputStok.value = inputStok.value.replace(/[^\d]/g, '');
                     document.getElementById('form-tambah').submit();
                 }
             });
         });
         var inputHarga2 = document.getElementById('harga_produk2');
+        var inputStok2 = document.getElementById('stok_produk2');
         function ubah(data) {
             document.getElementById('nama_produk').value = data['nama_produk'];
+            inputStok2.addEventListener('input', function () {
+                this.value = formatAngka(this.value);
+            });
+            document.getElementById('stok_produk2').value = formatAngka(data['stok_produk']);
             inputHarga2.addEventListener('input', function () {
                 this.value = formatAngka(this.value);
             });
@@ -253,6 +284,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     inputHarga2.value = inputHarga2.value.replace(/[^\d]/g, '');
+                    inputStok2.value = inputStok2.value.replace(/[^\d]/g, '');
                     document.getElementById('form-ubah').submit();
                 }
             });
