@@ -61,36 +61,40 @@
                             </thead>
                             <tbody>
                                 @foreach ($produks as $produk)
-                                    <tr>
-                                        <td>{{ $loop->iteration }}</td>
-                                        <td>{{ $produk->nama_produk }}</td>
-                                        <td>
-                                            @if ($produk->stok_produk < 10 && $produk->stok_produk != 0)
-                                                <span class="text-warning">{{ number_format($produk->stok_produk, 0, ',', '.') }}</span>
-                                            @elseif ($produk->stok_produk == 0)
-                                                <span class="text-danger">{{ number_format($produk->stok_produk, 0, ',', '.') }}</span>
-                                            @else
-                                            <span class="text-success">{{ number_format($produk->stok_produk, 0, ',', '.') }}</span>
-                                            @endif
-                                        </td>
-                                        <td>{{ $produk->harga_produk }}</td>
-                                        <td><img src="{{ asset('media/photos/upload/'.$produk->gambar_produk) }}" width="150px" alt="Gambar produk {{ $produk->nama_produk }}"></td>
-                                        <td>
-                                            <div class="dropdown dropstart">
-                                                <label role="button" class="text-info dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Pilih Opsi"><i class="fa fa-gear"></i> Opsi</label>
-                                                <div class="dropdown-menu fs-sm" aria-labelledby="btnAksi">
-                                                    <a role="button" class="dropdown-item text-warning btnEditData" data-bs-toggle="modal" data-bs-target="#modalUbah" data-bs-id="{{ $produk->id }}" onclick="ubah({{ json_encode($produk) }})"><i class="fa fa-pencil"></i> Ubah Data Produk</a>
-                                                    <div class="dropdown-divider"></div>
-                                                    <form id="delete-form-{{ $produk->id }}" action="{{ route('produk_hapus', $produk->id) }}" method="POST">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <input type="text" name="produkHps" value="{{ $produk->nama_produk }}" hidden>
-                                                        <a role="button" class="dropdown-item text-danger delete-link" id="delete-link-{{ $produk->id }}" title="Hapus Produk"><i class="fa fa-trash"></i> Hapus Produk</a>
-                                                    </form>
-                                                </div>
+                                <tr>
+                                    <td>{{ $loop->iteration }}</td>
+                                    <td>{{ $produk->nama_produk }}</td>
+                                    @if ($produk->stok_produk < 10 && $produk->stok_produk != 0)
+                                    <td title="Stok Hampir Habis">
+                                        <span class="text-warning">{{ number_format($produk->stok_produk, 0, ',', '.') }}</span>
+                                    </td>
+                                    @elseif ($produk->stok_produk == 0)
+                                    <td title="Stok Kosong">
+                                        <span class="text-danger">{{ number_format($produk->stok_produk, 0, ',', '.') }}</span>
+                                    </td>
+                                    @else
+                                    <td title="Stok Tersedia">
+                                    <span class="text-success">{{ number_format($produk->stok_produk, 0, ',', '.') }}</span>
+                                    </td>
+                                    @endif
+                                    <td>{{ $produk->harga_produk }}</td>
+                                    <td><img src="{{ asset('media/photos/upload/'.$produk->gambar_produk) }}" width="150px" alt="Gambar produk {{ $produk->nama_produk }}"></td>
+                                    <td>
+                                        <div class="dropdown dropstart">
+                                            <label role="button" class="text-info dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Pilih Opsi"><i class="fa fa-gear"></i> Opsi</label>
+                                            <div class="dropdown-menu fs-sm" aria-labelledby="btnAksi">
+                                                <a role="button" class="dropdown-item text-warning btnEditData" data-bs-toggle="modal" data-bs-target="#modalUbah" data-bs-id="{{ $produk->id }}" onclick="ubah({{ json_encode($produk) }})"><i class="fa fa-pencil"></i> Ubah Data Produk</a>
+                                                <div class="dropdown-divider"></div>
+                                                <form id="delete-form-{{ $produk->id }}" action="{{ route('produk_hapus', $produk->id) }}" method="POST">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <input type="text" name="produkHps" value="{{ $produk->nama_produk }}" hidden>
+                                                    <a role="button" class="dropdown-item text-danger delete-link" id="delete-link-{{ $produk->id }}" title="Hapus Produk"><i class="fa fa-trash"></i> Hapus Produk</a>
+                                                </form>
                                             </div>
-                                        </td>
-                                    </tr>
+                                        </div>
+                                    </td>
+                                </tr>
                                 @endforeach
                             </tbody>
                         </table>

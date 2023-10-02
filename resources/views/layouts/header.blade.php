@@ -43,6 +43,10 @@
                     </div>
                     <div class="p-2">
                         <a class="dropdown-item d-flex align-items-center justify-content-between"
+                            href="{{ route('viewUbahPw') }}">
+                            <span class="fs-sm fw-medium">Ubah Password</span>
+                        </a>
+                        <a class="dropdown-item d-flex align-items-center justify-content-between"
                             href="{{ route('logout') }}">
                             <span class="fs-sm fw-medium">Log Out</span>
                         </a>

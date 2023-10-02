@@ -17,7 +17,7 @@ class ProdukController extends Controller
             $produk->harga_asli = $produk->harga_produk;
             $produk->harga_produk = 'Rp' . number_format($produk->harga_produk, 2, ',', '.');
         });
-        return view('produk', compact('produks'));
+        return view('manajemen.produk', compact('produks'));
     }
 
     public function store(Request $request)

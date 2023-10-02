@@ -23,15 +23,23 @@
                         <span class="nav-main-link-name">Dashboard</span>
                     </a>
                     <li class="nav-main-heading">Manajemen Data</li>
+                    @if(Auth::user()->role == 'owner')
+                    <a class="nav-main-link" href="{{ route('karyawan_view') }}">
+                        <i class="nav-main-link-icon fa fa-users"></i>
+                        <span class="nav-main-link-name">Karyawan</span>
+                    </a>
+                    @endif
                     <a class="nav-main-link" href="{{ route('produk_view') }}">
                         <i class="nav-main-link-icon fa fa-bread-slice"></i>
                         <span class="nav-main-link-name">Produk</span>
                     </a>
+                    @if(Auth::user()->role == 'owner')
                     <li class="nav-main-heading">Transaksi</li>
                     <a class="nav-main-link" href="{{ route('pembayaran_view') }}">
                         <i class="nav-main-link-icon fa fa-money-check-dollar"></i>
                         <span class="nav-main-link-name">Pembayaran</span>
                     </a>
+                    @endif
                 </li>
             </ul>
         </div>
