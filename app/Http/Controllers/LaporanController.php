@@ -2,64 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Laporan;
+use App\Models\Pembelian;
 use Illuminate\Http\Request;
 
 class LaporanController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(Request $request)
     {
-        return view('laporan.keuangan');
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Laporan $laporan)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Laporan $laporan)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Laporan $laporan)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Laporan $laporan)
-    {
-        //
+        $tanggal = $request->input('tanggal');
+        if (!$tanggal) {
+            $tanggal = now()->format('Y-m-d');
+        }
+        $pembelians = Pembelian::whereDate('updated_at', $tanggal)->get();
+        $totalLaba = $pembelians->sum('total');
+        $labaKotor = ($totalLaba * 60) / 100;
+        $labaBersih = ($totalLaba * 40) / 100;
+        return view('laporan.keuangan', compact('pembelians', 'tanggal', 'totalLaba', 'labaKotor', 'labaBersih'));
     }
 }

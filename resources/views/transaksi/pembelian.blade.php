@@ -57,6 +57,7 @@
                         <table id="example" class="table table-bordered table-striped table-vcenter">
                             <thead>
                                 <tr>
+                                    <th>No.</th>
                                     <th>Tanggal</th>
                                     <th>Nama Produk</th>
                                     <th>Harga</th>
@@ -69,6 +70,7 @@
                             <tbody>
                                 @foreach ($pembelians as $pembelian)
                                     <tr>
+                                        <td>{{ $loop->iteration }}</td>
                                         <td>{{ $pembelian->updated_at }}</td>
                                         <td>{{ $pembelian->nama_produk }}</td>
                                         <td>{{ $pembelian->harga_satuan }}</td>
@@ -259,9 +261,8 @@
             }
 
             $('.table').DataTable({
-                order: [[0, 'desc']],
                 columnDefs: [
-                    { orderable: false, targets: [0, 1, 2, 3, 4, 5, 6] },
+                    { orderable: false, targets: [0, 1, 2, 3, 4, 5, 6, 7] },
                 ],
                 language: {
                     lengthMenu: "Tampilkan _MENU_ data per halaman",
@@ -282,7 +283,7 @@
                     extend: 'excelHtml5',
                     text: 'Export Data ke Excel',
                     exportOptions: {
-                        columns: [0, 1, 2, 3, 4, 5],
+                        columns: [0, 1, 2, 3, 4, 5, 6],
                     },
                     filename: 'Data Pembelian Octobake - {{ date("d F Y H.i.s") }} WIB',
                     title: 'Data Pembelian Octobake',

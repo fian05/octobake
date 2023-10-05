@@ -44,41 +44,62 @@
                 </div>
             </div>
         </div>
+        <div class="container">
+            <form action="{{ route('laporan_view') }}" method="GET">
+                <div class="mb-3">
+                    <label for="tanggal" class="form-label">Pilih Tanggal:</label>
+                    <input type="date" class="form-control" id="tanggal" name="tanggal" value="{{ $tanggal }}">
+                </div>
+                <button type="submit" class="btn btn-primary">Tampilkan Laporan</button>
+            </form>
+        </div>
         <div class="content">
             <div class="block block-rounded">
                 <div class="block-header block-header-default">
                     <h3 class="block-title">
-                        List Laporan Keuangan
+                        Laporan Keuangan Tanggal {{ $tanggal }}
                     </h3>
-                    {{-- <div class="block-options">
-                        <a role="button" id="btnPDF" class="btn text-primary btn-block-option" data-bs-toggle="modal" data-bs-target="#modal"><i class="fa fa-download"></i> PDF</a>
-                    </div> --}}
+                    <div class="block-options">
+                        {{-- <a role="button" id="btnPDF" class="btn text-primary btn-block-option" data-bs-toggle="modal" data-bs-target="#modal"><i class="fa fa-download"></i> PDF</a> --}}
+                    </div>
                 </div>
                 <div class="block-content">
                     <div class="table-responsive mb-3">
                         <table id="example" class="table table-bordered table-striped table-vcenter">
                             <thead>
                                 <tr>
-                                    <th>Tanggal</th>
                                     <th>Nama Produk</th>
-                                    <th>Harga</th>
-                                    <th>Jumlah</th>
+                                    <th>Harga Satuan</th>
+                                    <th>Jumlah Dibeli</th>
                                     <th>Diskon</th>
                                     <th>Total</th>
-                                    <th>Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>1</td>
-                                    <td>2</td>
-                                    <td>3</td>
-                                    <td>4</td>
-                                    <td>5</td>
-                                    <td>6</td>
-                                    <td>Gass</td>
-                                </tr>
+                                @foreach ($pembelians as $pembelian)
+                                    <tr>
+                                        <td>{{ $pembelian->nama_produk }}</td>
+                                        <td>Rp{{ number_format($pembelian->harga_satuan, 0, ',', '.') }}</td>
+                                        <td>{{ $pembelian->jumlah_dibeli }}</td>
+                                        <td>{{ $pembelian->diskon }}%</td>
+                                        <td>Rp{{ number_format($pembelian->total, 0, ',', '.') }}</td>
+                                    </tr>
+                                @endforeach
                             </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th colspan="4">Total</th>
+                                    <th id="total">Rp{{ number_format($totalLaba, 0, ',', '.') }}</th>
+                                </tr>
+                                <tr>
+                                    <th colspan="4">60%</th>
+                                    <th id="laba-kotor">Rp{{ number_format($labaKotor, 0, ',', '.') }}</th>
+                                </tr>
+                                <tr>
+                                    <th colspan="4">40%</th>
+                                    <th id="laba-bersih">Rp{{ number_format($labaBersih, 0, ',', '.') }}</th>
+                                </tr>
+                            </tfoot>
                         </table>
                     </div>
                 </div>
@@ -90,11 +111,37 @@
 @section('script')
     <script>
         $(document).ready(function() {
-            $('.table').DataTable({
-                order: [[0, 'desc']],
-                columnDefs: [
-                    { orderable: false, targets: [0, 1, 2, 3, 4, 5, 6] },
-                ],
+            var table = $('.table').DataTable({
+                dom: 'Bfrtip',
+                buttons: [{
+                    extend: 'pdfHtml5',
+                    text: 'Export Data ke PDF',
+                    exportOptions: {
+                        columns: [0, 1, 2, 3],
+                    },
+                    customize: function(doc) {
+                        // Hitung total laba
+                        var totalLaba = 0;
+                        table.column(4, { page: 'current' }).data().each(function(value) {
+                            totalLaba += parseInt(value.replace(/\D/g, ''), 10);
+                        });
+                        // Hitung laba kotor (60%)
+                        var labaKotor = (totalLaba * 60) / 100;
+                        // Hitung laba bersih (40%)
+                        var labaBersih = (totalLaba * 40) / 100;
+
+                        // Tambahkan elemen-elemen ke PDF
+                        doc.content.splice(1, 0, {
+                            text: [
+                                'Total Laba: Rp' + $.fn.dataTable.render.number(',', '.', 0).display(totalLaba),
+                                'Laba Kotor (60%): Rp' + $.fn.dataTable.render.number(',', '.', 0).display(labaKotor),
+                                'Laba Bersih (40%): Rp' + $.fn.dataTable.render.number(',', '.', 0).display(labaBersih),
+                            ],
+                            margin: [0, 0, 0, 12],
+                            alignment: 'right'
+                        });
+                    }
+                }],
                 language: {
                     lengthMenu: "Tampilkan _MENU_ data per halaman",
                     zeroRecords: "Data tidak ditemukan.",
@@ -110,16 +157,9 @@
                     }
                 },
                 lengthChange: false,
-                buttons: [{
-                    extend: 'pdfHtml5',
-                    text: 'Export Data ke PDF',
-                    exportOptions: {
-                        columns: [0, 1, 2, 3],
-                    },
-                    filename: 'Laporan Keuangan Octobake - {{ date("d F Y H.i.s") }} WIB',
-                    title: 'Laporan Keuangan Octobake',
-                },],
-            }).buttons().container().appendTo('#example_wrapper .col-md-6:eq(0)');
+            });
+
+            table.buttons().container().appendTo('#example_wrapper .col-md-6:eq(0)');
         });
     </script>
 @endsection
