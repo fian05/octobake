@@ -35,9 +35,9 @@
                     </a>
                     @if(Auth::user()->role == 'owner')
                     <li class="nav-main-heading">Transaksi</li>
-                    <a class="nav-main-link" href="{{ route('pembayaran_view') }}">
+                    <a class="nav-main-link" href="{{ route('pembelian_view') }}">
                         <i class="nav-main-link-icon fa fa-money-check-dollar"></i>
-                        <span class="nav-main-link-name">Pembayaran</span>
+                        <span class="nav-main-link-name">Pembelian</span>
                     </a>
                     @endif
                 </li>

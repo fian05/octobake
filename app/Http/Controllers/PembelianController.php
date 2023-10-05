@@ -4,24 +4,27 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
-use App\Models\Pembayaran;
+use App\Models\Pembelian;
+use App\Models\Produk;
 use Illuminate\Http\Request;
 
-class PembayaranController extends Controller
+class PembelianController extends Controller
 {
     public function index()
     {
-        $pembayarans = Pembayaran::all();
-        return view('pembayaran', compact('pembayarans'));
+        $produks = Produk::all();
+        $pembelians = Pembelian::all();
+        return view('transaksi.pembelian', compact('produks', 'pembelians'));
     }
 
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'produk' => 'required',
-            'dp' => 'required|numeric',
+            'nama_produk' => 'required',
+            'harga_satuan' => 'required|numeric',
+            'jumlah_dibeli' => 'required|numeric',
+            'diskon' => 'required|numeric',
             'total' => 'required|numeric',
-            'atas_nama' => 'required',
         ]);
         dd($validator);
         if ($validator->fails()) {
@@ -31,12 +34,12 @@ class PembayaranController extends Controller
                 'message' => 'Ada inputan yang salah!',
             ]);
         } else {
-            Pembayaran::create([
-                "invoice" => "INV".date("Ymd"),
-                "produk" => $request->produk,
-                "dp" => $request->dp,
+            Pembelian::create([
+                "nama_produk" => $request->nama_produk,
+                "harga_satuan" => $request->harga_satuan,
+                "jumlah_dibeli" => $request->jumlah_dibeli,
+                "diskon" => $request->diskon,
                 "total" => $request->total,
-                "atas_nama" => $request->atas_nama,
             ]);
             Session::flash('alert', [
                 'type' => 'success',

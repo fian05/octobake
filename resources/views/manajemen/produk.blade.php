@@ -8,6 +8,12 @@
     <link rel="stylesheet" href="{{ asset('js/plugins/datatables-bs5/css/dataTables.bootstrap5.min.css') }}">
     <script src="{{ asset('js/plugins/datatables/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('js/plugins/datatables-bs5/js/dataTables.bootstrap5.min.js') }}"></script>
+    {{-- Keperluan Tombol DataTables --}}
+    <link rel="stylesheet" href="{{ asset('js/plugins/datatables-buttons-bs5/css/buttons.bootstrap5.min.css') }}">
+    <script src="{{ asset('js/plugins/datatables-buttons/dataTables.buttons.min.js') }}"></script>
+    <script src="{{ asset('js/plugins/datatables-buttons-bs5/js/buttons.bootstrap5.min.js') }}"></script>
+    <script src="{{ asset('js/plugins/datatables-buttons-jszip/jszip.min.js') }}"></script>
+    <script src="{{ asset('js/plugins/datatables-buttons/buttons.html5.min.js') }}"></script>
 @endsection
 
 @section('content')
@@ -48,7 +54,7 @@
                 </div>
                 <div class="block-content">
                     <div class="table-responsive mb-3">
-                        <table class="table table-bordered table-striped table-vcenter">
+                        <table id="example" class="table table-bordered table-striped table-vcenter">
                             <thead>
                                 <tr>
                                     <th>No.</th>
@@ -134,7 +140,7 @@
                             </div>
                             <div class="col-md mb-3">
                                 <label>Stok Produk <small class="text-danger">*</small></label>
-                                <input type="text" class="form-control form-control-alt form-control-lg" name="stok_produk" id="stok_produk" placeholder=" " autocomplete="off" required>
+                                <input type="number" class="form-control form-control-alt form-control-lg" name="stok_produk" id="stok_produk" min="0" value="0" autocomplete="off" required>
                             </div>
                         </div>
                         <small class="fst-italic"><span class="text-danger">*</span> Wajib Diisi</small>
@@ -180,7 +186,7 @@
                             </div>
                             <div class="col-md mb-3">
                                 <label>Stok Produk <small class="text-danger">*</small></label>
-                                <input type="text" class="form-control form-control-alt form-control-lg" name="stok_produk" id="stok_produk2" placeholder=" " autocomplete="off" required>
+                                <input type="number" class="form-control form-control-alt form-control-lg" name="stok_produk" id="stok_produk2" placeholder=" " autocomplete="off" required>
                             </div>
                         </div>
                         <small class="fst-italic"><span class="text-danger">*</span> Wajib Diisi</small>
@@ -217,8 +223,18 @@
                         previous: "Sebelumnya",
                         next: "Selanjutnya"
                     }
-                }
-            });
+                },
+                lengthChange: false,
+                buttons: [{
+                    extend: 'excelHtml5',
+                    text: 'Export Data ke Excel',
+                    exportOptions: {
+                        columns: [0, 1, 2, 3],
+                    },
+                    filename: 'Data Produk Octobake - {{ date("d F Y H.i.s") }} WIB',
+                    title: 'Data Produk Octobake',
+                },],
+            }).buttons().container().appendTo('#example_wrapper .col-md-6:eq(0)');
         });
         var inputHarga = document.getElementById('harga_produk');
         inputHarga.addEventListener('input', function () {

@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\PembayaranController;
+use App\Http\Controllers\PembelianController;
 use App\Http\Controllers\ProdukController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -38,6 +38,6 @@ Route::middleware('auth')->group(function() {
     Route::put('produk/ubah', [ProdukController::class, 'update'])->name('produk_ubah');
     Route::delete('produk/{id}/hapus', [ProdukController::class, 'destroy'])->name('produk_hapus');
 
-    Route::get('pembayaran', [PembayaranController::class, 'index'])->name('pembayaran_view');
-    Route::post('pembayaran/tambah', [PembayaranController::class, 'store'])->name('pembayaran_tambah');
+    Route::get('pembelian', [PembelianController::class, 'index'])->name('pembelian_view');
+    Route::post('pembelian/tambah', [PembelianController::class, 'store'])->name('pembelian_tambah');
 });

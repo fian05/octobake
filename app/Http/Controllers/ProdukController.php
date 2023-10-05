@@ -39,7 +39,7 @@ class ProdukController extends Controller
             if (!file_exists($folderPath)) {
                 mkdir($folderPath, 0755, true);
             }
-            $nama = strtolower(str_replace(' ', '-', $request->nama_produk));
+            $nama = strtolower(str_replace([' ', '(', ')', '+'], ['-', '', '', '-'], $request->nama_produk));
             $namaFile = $nama.'.jpg';
             $request->file('gambar_produk')->move($folderPath, $namaFile);
             Produk::create([
@@ -80,7 +80,7 @@ class ProdukController extends Controller
                     mkdir($folderPath, 0755, true);
                 }
                 if ($request->hasFile('gambar_produk')) {
-                    $nama = strtolower(str_replace(' ', '-', $request->nama_produk));
+                    $nama = strtolower(str_replace([' ', '(', ')', '+'], ['-', '', '', '-'], $request->nama_produk));
                     $namaFile = $nama.'.jpg';
                     $request->file('gambar_produk')->move($folderPath, $namaFile);
                     $produk->update([
