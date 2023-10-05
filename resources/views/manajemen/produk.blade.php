@@ -186,7 +186,7 @@
                             </div>
                             <div class="col-md mb-3">
                                 <label>Stok Produk <small class="text-danger">*</small></label>
-                                <input type="number" class="form-control form-control-alt form-control-lg" name="stok_produk" id="stok_produk2" placeholder=" " autocomplete="off" required>
+                                <input type="number" class="form-control form-control-alt form-control-lg" name="stok_produk" id="stok_produk2" min="0" autocomplete="off" required>
                             </div>
                         </div>
                         <small class="fst-italic"><span class="text-danger">*</span> Wajib Diisi</small>

@@ -1,10 +1,11 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\ProdukController;
+use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PembelianController;
-use App\Http\Controllers\ProdukController;
-use App\Http\Controllers\UserController;
-use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -40,4 +41,7 @@ Route::middleware('auth')->group(function() {
 
     Route::get('pembelian', [PembelianController::class, 'index'])->name('pembelian_view');
     Route::post('pembelian/tambah', [PembelianController::class, 'store'])->name('pembelian_tambah');
+    Route::delete('pembelian/{id}/hapus', [PembelianController::class, 'destroy'])->name('pembelian_hapus');
+    
+    Route::get('laporan', [LaporanController::class, 'index'])->name('laporan_view');
 });

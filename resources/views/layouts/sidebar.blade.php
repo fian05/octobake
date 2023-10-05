@@ -33,11 +33,16 @@
                         <i class="nav-main-link-icon fa fa-bread-slice"></i>
                         <span class="nav-main-link-name">Produk</span>
                     </a>
-                    @if(Auth::user()->role == 'owner')
                     <li class="nav-main-heading">Transaksi</li>
                     <a class="nav-main-link" href="{{ route('pembelian_view') }}">
                         <i class="nav-main-link-icon fa fa-money-check-dollar"></i>
                         <span class="nav-main-link-name">Pembelian</span>
+                    </a>
+                    @if(Auth::user()->role == 'owner')
+                    <li class="nav-main-heading">Laporan</li>
+                    <a class="nav-main-link" href="{{ route('laporan_view') }}">
+                        <i class="nav-main-link-icon fa fa-money-check-dollar"></i>
+                        <span class="nav-main-link-name">Keuangan</span>
                     </a>
                     @endif
                 </li>
