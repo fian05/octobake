@@ -44,7 +44,7 @@
                 </div>
             </div>
         </div>
-        <div class="container">
+        <div class="content">
             <form action="{{ route('laporan_view') }}" method="GET">
                 <div class="mb-3">
                     <label for="tanggal" class="form-label">Pilih Tanggal:</label>

@@ -18,7 +18,7 @@ return new class extends Migration
             $table->integer('jumlah_dibeli');
             $table->integer('diskon');
             $table->integer('total');
-            $table->timestamps();
+            $table->timestamp('tanggal_pembelian');
         });
     }
 

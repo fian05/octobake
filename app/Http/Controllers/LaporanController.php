@@ -13,7 +13,7 @@ class LaporanController extends Controller
         if (!$tanggal) {
             $tanggal = now()->format('Y-m-d');
         }
-        $pembelians = Pembelian::whereDate('updated_at', $tanggal)->get();
+        $pembelians = Pembelian::whereDate('tanggal_pembelian', $tanggal)->get();
         $totalLaba = $pembelians->sum('total');
         $labaKotor = ($totalLaba * 60) / 100;
         $labaBersih = ($totalLaba * 40) / 100;

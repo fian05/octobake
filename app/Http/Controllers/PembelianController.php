@@ -26,7 +26,7 @@ class PembelianController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'tanggal_pembelian' => 'required|date',
+            'tanggal_pembelian' => 'required',
             'nama_produk' => 'required|exists:produk,id',
             'harga_satuan' => 'required|numeric',
             'jumlah_dibeli' => 'required|numeric|min:1',
@@ -52,7 +52,7 @@ class PembelianController extends Controller
                     "jumlah_dibeli" => $request->jumlah_dibeli,
                     "diskon" => $request->diskon,
                     "total" => $request->total,
-                    "updated_at" => $request->tanggal_pembelian,
+                    "tanggal_pembelian" => $request->tanggal_pembelian,
                 ]);
                 Session::flash('alert', [
                     'type' => 'success',

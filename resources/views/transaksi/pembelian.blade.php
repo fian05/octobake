@@ -71,7 +71,7 @@
                                 @foreach ($pembelians as $pembelian)
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
-                                        <td>{{ $pembelian->updated_at }}</td>
+                                        <td>{{ $pembelian->tanggal_pembelian }} WIB</td>
                                         <td>{{ $pembelian->nama_produk }}</td>
                                         <td>{{ $pembelian->harga_satuan }}</td>
                                         <td>{{ number_format($pembelian->jumlah_dibeli, 0, ',', '.') }}</td>
@@ -107,7 +107,7 @@
                         <div class="row">
                             <div class="col-md mb-3">
                                 <label for="tanggal_pembelian" class="form-label">Tanggal Pembelian</label>
-                                <input type="date" class="form-control" id="tanggal_pembelian" value="{{ date("Y-m-d") }}" name="tanggal_pembelian" required>
+                                <input type="datetime-local" class="form-control" id="tanggal_pembelian" value="{{ date("Y-m-d") }}" name="tanggal_pembelian" required>
                             </div>
                             <div class="col-md mb-3">
                                 <label for="nama_produk" class="form-label">Produk</label>

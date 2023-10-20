@@ -17,5 +17,8 @@ class Pembelian extends Model
         'jumlah_dibeli',
         'diskon',
         'total',
+        'tanggal_pembelian',
     ];
+
+    public $timestamps = false;
 }
