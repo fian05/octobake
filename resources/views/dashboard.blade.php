@@ -95,7 +95,7 @@
                 data: {
                     labels: chartData['Harian'].labels,
                     datasets: [{
-                        label: 'Penjualan',
+                        label: 'Penjualan (Rp)',
                         data: chartData['Harian'].data,
                         backgroundColor: '#f0ca78',
                         borderColor: '#f7aa02',
