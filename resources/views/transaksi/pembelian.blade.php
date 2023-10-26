@@ -49,6 +49,7 @@
                         List Transaksi Pembelian
                     </h3>
                     <div class="block-options">
+                        <a role="button" id="print-button" class="btn text-info btn-block-option">Cetak</a>
                         <a role="button" id="btnTambahData" class="btn text-primary btn-block-option" data-bs-toggle="modal" data-bs-target="#modal"><i class="fa fa-plus"></i> Tambah Data</a>
                     </div>
                 </div>
@@ -57,6 +58,7 @@
                         <table id="example" class="table table-bordered table-striped table-vcenter">
                             <thead>
                                 <tr>
+                                    <th></th>
                                     <th>No.</th>
                                     <th>Tanggal</th>
                                     <th>Nama Produk</th>
@@ -70,6 +72,7 @@
                             <tbody>
                                 @foreach ($pembelians as $pembelian)
                                     <tr>
+                                        <td><input type="checkbox" class="select-checkbox"></td>
                                         <td>{{ $loop->iteration }}</td>
                                         <td>{{ $pembelian->tanggal_pembelian }} WIB</td>
                                         <td>{{ $pembelian->nama_produk }}</td>
@@ -107,7 +110,7 @@
                         <div class="row">
                             <div class="col-md mb-3">
                                 <label for="tanggal_pembelian" class="form-label">Tanggal Pembelian</label>
-                                <input type="datetime-local" class="form-control" id="tanggal_pembelian" value="{{ date("Y-m-d") }}" name="tanggal_pembelian" required>
+                                <input type="datetime-local" class="form-control" id="tanggal_pembelian" name="tanggal_pembelian" required>
                             </div>
                             <div class="col-md mb-3">
                                 <label for="nama_produk" class="form-label">Produk</label>
@@ -158,37 +161,76 @@
             </div>
         </div>
     </div>
-
-    <div class="modal fade" id="modalDetail" tabindex="-1" role="dialog" aria-labelledby="modalDetailLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalDetailLabel">Detail Transaksi Pembelian</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <!-- Tempatkan detail transaksi di sini -->
-                    <p>Tanggal: <span id="detailTanggal"></span></p>
-                    <p>Nama Produk: <span id="detailNamaProduk"></span></p>
-                    <p>Harga: <span id="detailHarga"></span></p>
-                    <p>Jumlah: <span id="detailJumlah"></span></p>
-                    <p>Diskon: <span id="detailDiskon"></span></p>
-                    <p>Total: <span id="detailTotal"></span></p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-danger" id="btnHapusData">Hapus Data</button>
-                </div>
-            </div>
-        </div>
-    </div>
 @endsection
 
 @section('script')
     <script>
         $(document).ready(function() {
+            function printSelectedData() {
+                var selectedRows = [];
+                // Mengumpulkan data yang dipilih
+                $('.table tbody input[type="checkbox"]:checked').each(function () {
+                    var row = $(this).closest('tr');
+                    var data = {
+                        No: row.find('td:eq(0)').text(),
+                        Tanggal: row.find('td:eq(1)').text(),
+                        NamaProduk: row.find('td:eq(2)').text(),
+                        Harga: row.find('td:eq(3)').text(),
+                        Jumlah: row.find('td:eq(4)').text(),
+                        Diskon: row.find('td:eq(5)').text(),
+                        Total: row.find('td:eq(6)').text(),
+                    };
+                    selectedRows.push(data);
+                });
+
+                // Membuat template cetak HTML
+                var printHtml = '<html><head><title>Struk Nota Belanja</title></head><body>';
+                printHtml += '<h2>Struk Nota Belanja</h2>';
+                printHtml += '<p>Nama Kasir: ' + '{{ Auth::user()->nama }}' + '</p>';
+                printHtml += '<p>Nama Toko: Octobake</p>';
+                printHtml += '<table>';
+                printHtml += '<tr><th>No.</th><th>Tanggal</th><th>Nama Produk</th><th>Harga</th><th>Jumlah</th><th>Diskon</th><th>Total</th></tr>';
+
+                for (var i = 0; i < selectedRows.length; i++) {
+                    printHtml += '<tr>';
+                    printHtml += '<td>' + selectedRows[i].No + '</td>';
+                    printHtml += '<td>' + selectedRows[i].Tanggal + '</td>';
+                    printHtml += '<td>' + selectedRows[i].NamaProduk + '</td>';
+                    printHtml += '<td>' + selectedRows[i].Harga + '</td>';
+                    printHtml += '<td>' + selectedRows[i].Jumlah + '</td>';
+                    printHtml += '<td>' + selectedRows[i].Diskon + '</td>';
+                    printHtml += '<td>' + selectedRows[i].Total + '</td>';
+                    printHtml += '</tr>';
+                }
+
+                printHtml += '</table>';
+                printHtml += '</body></html>';
+
+                var printWindow = window.open('', '', 'width=600,height=600');
+                printWindow.document.open();
+                printWindow.document.write(printHtml);
+                printWindow.document.close();
+                printWindow.print();
+                printWindow.close();
+            }
+
+            $('#print-button').click(function () {
+                printSelectedData();
+            });
+
+
+            document.getElementById("btnTambahData").addEventListener("click", function () {
+                var inputTanggalPembelian = document.getElementById("tanggal_pembelian");
+                var now = new Date();
+                var year = now.getFullYear();
+                var month = (now.getMonth() + 1).toString().padStart(2, '0');
+                var day = now.getDate().toString().padStart(2, '0');
+                var hours = now.getHours().toString().padStart(2, '0');
+                var minutes = now.getMinutes().toString().padStart(2, '0');
+                var seconds = now.getSeconds().toString().padStart(2, '0');
+                inputTanggalPembelian.value = year + "-" + month + "-" + day + "T" + hours + ":" + minutes + ":" + seconds;
+            });
+
             $('#nama_produk option').each(function() {
                 var stok = $(this).data('stok');
                 if (stok === 0) {

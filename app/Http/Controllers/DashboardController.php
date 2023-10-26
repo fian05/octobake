@@ -9,10 +9,9 @@ class DashboardController extends Controller
 {
     public function index() {
         $sekarang = Carbon::now();
+        // Harian
         $sebelumnya = Carbon::now()->subDays(4)->toDateString();
         $besok = Carbon::now()->addDay()->toDateString();
-        
-        // Harian
         $dataHarian = Pembelian::selectRaw('DATE(tanggal_pembelian) as tanggal, SUM(total) as total_pembelian')->whereBetween('tanggal_pembelian', [$sebelumnya, $besok])->groupBy('tanggal')->orderBy('tanggal', 'desc')->get();
         $dataHarian = $dataHarian->map(function ($item) {
             return [
@@ -50,12 +49,10 @@ class DashboardController extends Controller
             $date = $sekarang->copy()->subMonths($i);
             $startOfMonth = $date->copy()->startOfMonth();
             $endOfMonth = $date->copy()->endOfMonth();
-            $totalPenjualan = Pembelian::whereBetween('tanggal_pembelian', [$startOfMonth, $endOfMonth])->sum('total');
-            $formattedDate = $date->format('Y-m-d');
-            $label = $date->format('F Y');
+            $totalPenjualan = Pembelian::whereBetween('tanggal_pembelian', [$startOfMonth->format('Y-m-d 00:00:00'), $endOfMonth->format('Y-m-d 23:59:59')])->sum('total');
+            $formattedDate = $date->format('F Y');
             $dataBulanan[] = [
-                'tanggal_pembelian' => $formattedDate,
-                'label' => $label,
+                'label' => $formattedDate,
                 'total_penjualan' => $totalPenjualan,
             ];
         }

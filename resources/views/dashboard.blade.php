@@ -75,40 +75,36 @@
                 var dataMingguan = {!! $dataMingguanJson !!};
                 for (let i = 0; i < 5; i++) {
                     const startDate = new Date(now);
-                    startDate.setDate(now.getDate() - now.getDay() - (7 * i)); // Menghitung Senin
+                    startDate.setDate(now.getDate() - now.getDay() - (7 * i));
                     const endDate = new Date(startDate);
-                    endDate.setDate(startDate.getDate() + 6); // Menghitung Minggu
-
-                    // Format label dengan memeriksa apakah tahun dan bulan sama
+                    endDate.setDate(startDate.getDate() + 6);
                     const startYear = startDate.getFullYear();
                     const endYear = endDate.getFullYear();
                     const startMonth = startDate.getMonth();
                     const endMonth = endDate.getMonth();
 
                     let label = startDate.toLocaleDateString('id-ID', { day: 'numeric' });
-
                     if (startYear !== endYear) {
                         label += ` ${startDate.toLocaleDateString('id-ID', { month: 'long' })} ${startYear}`;
                     } else if (startMonth !== endMonth) {
                         label += ` ${startDate.toLocaleDateString('id-ID', { month: 'long' })}`;
                     }
-
                     label += ` - ${endDate.toLocaleDateString('id-ID', { day: 'numeric', month: 'long' })} ${endYear}`;
-
                     labels.unshift(label);
-
-                    // Cari data penjualan mingguan sesuai rentang tanggal
                     const matchingData = dataMingguan.find(item => item.tanggal_pembelian === startDate.toISOString().slice(0, 10));
-
                     data.unshift(matchingData ? matchingData.total_penjualan : 0);
                 }
             } else if (dataType === "Bulanan") {
+                var dataBulanan = {!! $dataBulananJson !!};
                 for (let i = 4; i >= 0; i--) {
                     const date = new Date(now);
                     date.setMonth(now.getMonth() - i);
-                    labels.push(date.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' }));
-                    // Gantilah ini dengan logika untuk mendapatkan data penjualan bulanan sesuai tanggal
-                    data.push(Math.floor(Math.random() * 50000));
+                    const formattedDate = date.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
+                    const formattedDateUS = date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+                    var matchingData = dataBulanan.find(item => item.label === formattedDateUS);
+
+                    labels.push(formattedDate);
+                    data.push(matchingData ? matchingData.total_penjualan : 0);
                 }
             }
 
