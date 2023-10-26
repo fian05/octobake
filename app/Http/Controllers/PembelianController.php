@@ -17,8 +17,8 @@ class PembelianController extends Controller
         $pembelians->each(function ($pembelian) {
             $pembelian->harga_satuan_asli = $pembelian->harga_satuan;
             $pembelian->total_asli = $pembelian->total;
-            $pembelian->harga_satuan = 'Rp' . number_format($pembelian->harga_satuan, 2, ',', '.');
-            $pembelian->total = 'Rp' . number_format($pembelian->total, 2, ',', '.');
+            $pembelian->harga_satuan = 'Rp' . number_format($pembelian->harga_satuan, 0, ',', '.');
+            $pembelian->total = 'Rp' . number_format($pembelian->total, 0, ',', '.');
         });
         return view('transaksi.pembelian', compact('produks', 'pembelians'));
     }

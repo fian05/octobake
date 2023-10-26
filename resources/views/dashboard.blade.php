@@ -52,101 +52,130 @@
 
 @section('script')
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var grafikHarian = @json($dataHarian);
-            grafikHarian.reverse();
-            grafikHarian = grafikHarian.slice(-5);
-            var labelHarian = [];
-            var dataHarian = [];
-            var hariIni = new Date();
+        function generateRealTimeData(dataType) {
+            const now = new Date();
+            const labels = [];
+            const data = [];
 
-            for (var i = 0; i < grafikHarian.length; i++) {
-                var item = grafikHarian[i];
-                if (item) {
-                    var dateItem = new Date(item.tanggal.replace(/-/g, "/"));
-                    labelHarian.push(dateItem.toLocaleDateString('id-ID', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' }));
-                    dataHarian.push(item.total_pembelian);
-                } else {
-                    labelHarian.push(hariIni.toLocaleDateString('id-ID', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' }));
-                    dataHarian.push(0);
+            if (dataType === "Harian") {
+                const daysOfWeek = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+                for (let i = 4; i >= 0; i--) {
+                    const date = new Date(now);
+                    date.setDate(now.getDate() - i);
+                    const formattedDate = date.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+                    const formattedTimestamp = date.toISOString().slice(0, 10);
+                    const dayOfWeek = daysOfWeek[date.getDay()];
+                    var dataHarian = {!! $dataHarianJson !!};
+                    const matchingData = dataHarian.find(item => item.tanggal_pembelian === formattedTimestamp);
+
+                    labels.push(`${dayOfWeek}, ${formattedDate}`);
+                    data.push(matchingData ? matchingData.total : 0);
                 }
-                hariIni.setDate(hariIni.getDate() - 1);
-            }
-            var chartData = {
-                Harian: {
-                    labels: labelHarian,
-                    data: dataHarian,
-                },
-                Mingguan: {
-                    labels: '',
-                    data: [100, 120, 90, 105, 110],
-                },
-                Bulanan: {
-                    labels: '',
-                    data: [350, 420, 390, 460, 510],
-                }
-            };
+            } else if (dataType === "Mingguan") {
+                var dataMingguan = {!! $dataMingguanJson !!};
+                for (let i = 0; i < 5; i++) {
+                    const startDate = new Date(now);
+                    startDate.setDate(now.getDate() - now.getDay() - (7 * i)); // Menghitung Senin
+                    const endDate = new Date(startDate);
+                    endDate.setDate(startDate.getDate() + 6); // Menghitung Minggu
 
-            var ctx = document.getElementById('grafikPenjualan').getContext('2d');
-            var grafikPenjualan;
+                    // Format label dengan memeriksa apakah tahun dan bulan sama
+                    const startYear = startDate.getFullYear();
+                    const endYear = endDate.getFullYear();
+                    const startMonth = startDate.getMonth();
+                    const endMonth = endDate.getMonth();
 
-            grafikPenjualan = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: chartData['Harian'].labels,
-                    datasets: [{
-                        label: 'Penjualan (Rp)',
-                        data: chartData['Harian'].data,
-                        backgroundColor: '#f0ca78',
-                        borderColor: '#f7aa02',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
+                    let label = startDate.toLocaleDateString('id-ID', { day: 'numeric' });
+
+                    if (startYear !== endYear) {
+                        label += ` ${startDate.toLocaleDateString('id-ID', { month: 'long' })} ${startYear}`;
+                    } else if (startMonth !== endMonth) {
+                        label += ` ${startDate.toLocaleDateString('id-ID', { month: 'long' })}`;
                     }
+
+                    label += ` - ${endDate.toLocaleDateString('id-ID', { day: 'numeric', month: 'long' })} ${endYear}`;
+
+                    labels.unshift(label);
+
+                    // Cari data penjualan mingguan sesuai rentang tanggal
+                    const matchingData = dataMingguan.find(item => item.tanggal_pembelian === startDate.toISOString().slice(0, 10));
+
+                    data.unshift(matchingData ? matchingData.total_penjualan : 0);
                 }
-            });
-
-            var ctx = document.getElementById('grafikPenjualan').getContext('2d');
-            var grafikPenjualan;
-
-            var dataTypeSelect = document.getElementById('data-type');
-
-            dataTypeSelect.value = "Harian";
-
-            dataTypeSelect.addEventListener('change', function () {
-                var selectedType = dataTypeSelect.value;
-
-                if (grafikPenjualan) {
-                    grafikPenjualan.destroy();
+            } else if (dataType === "Bulanan") {
+                for (let i = 4; i >= 0; i--) {
+                    const date = new Date(now);
+                    date.setMonth(now.getMonth() - i);
+                    labels.push(date.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' }));
+                    // Gantilah ini dengan logika untuk mendapatkan data penjualan bulanan sesuai tanggal
+                    data.push(Math.floor(Math.random() * 50000));
                 }
+            }
 
-                // Inisialisasi grafik dengan data yang dipilih
-                grafikPenjualan = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: chartData[selectedType].labels,
-                        datasets: [{
-                            label: 'Penjualan',
-                            data: chartData[selectedType].data,
-                            backgroundColor: '#f0ca78',
-                            borderColor: '#f7aa02',
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        scales: {
-                            y: {
-                                beginAtZero: true
+            return { labels, data };
+        }
+
+        const ctx = document.getElementById("grafikPenjualan").getContext('2d');
+        let currentDataType = "Harian";
+
+        // Inisialisasi chart dengan data harian sebagai default
+        const initialData = generateRealTimeData(currentDataType);
+        const chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: initialData.labels,
+                datasets: [{
+                    label: 'Total Pendapatan',
+                    data: initialData.data,
+                    backgroundColor: '#f0ca78',
+                    borderColor: '#f7aa02',
+                    borderWidth: 1,
+                    fill: true,
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return 'Rp' + new Intl.NumberFormat('id-ID', {
+                                    style: 'decimal',
+                                    minimumFractionDigits: 0,
+                                    maximumFractionDigits: 0
+                                }).format(value);
                             }
                         }
                     }
-                });
-            });
+                },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                label += 'Rp' + new Intl.NumberFormat('id-ID', {
+                                    style: 'decimal',
+                                    minimumFractionDigits: 0,
+                                    maximumFractionDigits: 0
+                                }).format(context.parsed.y);
+                                return label;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Fungsi untuk mengganti data grafik saat jenis data dipilih
+        document.getElementById("data-type").addEventListener("change", function () {
+            currentDataType = this.value;
+            const newData = generateRealTimeData(currentDataType);
+            chart.data.labels = newData.labels;
+            chart.data.datasets[0].data = newData.data;
+            chart.update();
         });
     </script>
 @endsection
