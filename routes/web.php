@@ -42,6 +42,7 @@ Route::middleware('auth')->group(function() {
     Route::get('pembelian', [PembelianController::class, 'index'])->name('pembelian_view');
     Route::post('pembelian/tambah', [PembelianController::class, 'store'])->name('pembelian_tambah');
     Route::delete('pembelian/{id}/hapus', [PembelianController::class, 'destroy'])->name('pembelian_hapus');
+    Route::get('pembelian/cetak', [PembelianController::class, 'print'])->name('pembelian_cetak');
     
     Route::get('laporan', [LaporanController::class, 'index'])->name('laporan_view');
 });

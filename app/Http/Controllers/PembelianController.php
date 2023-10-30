@@ -102,4 +102,19 @@ class PembelianController extends Controller
         }
         return back();
     }
+
+    public function print(Request $request) {
+        $dataDipilih = $request->dataDipilih;
+        if($dataDipilih) {
+            $pembelians = Pembelian::whereIn('id', $dataDipilih)->get();
+            return response()->json([
+                'status' => 'success',
+                'pembelians' => $pembelians,
+            ]);
+        } else {
+            return response()->json([
+                'status' => 'error',
+            ]);
+        }
+    }
 }

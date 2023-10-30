@@ -49,7 +49,7 @@
                         List Transaksi Pembelian
                     </h3>
                     <div class="block-options">
-                        <a role="button" id="print-button" class="btn text-info btn-block-option">Cetak</a>
+                        <a id="print-button" class="btn text-info btn-block-option">Cetak</a>
                         <a role="button" id="btnTambahData" class="btn text-primary btn-block-option" data-bs-toggle="modal" data-bs-target="#modal"><i class="fa fa-plus"></i> Tambah Data</a>
                     </div>
                 </div>
@@ -58,7 +58,7 @@
                         <table id="example" class="table table-bordered table-striped table-vcenter">
                             <thead>
                                 <tr>
-                                    <th></th>
+                                    <th><input type="checkbox" id="select-all" title="Pilih semua data"></th>
                                     <th>No.</th>
                                     <th>Tanggal</th>
                                     <th>Nama Produk</th>
@@ -72,12 +72,12 @@
                             <tbody>
                                 @foreach ($pembelians as $pembelian)
                                     <tr>
-                                        <td><input type="checkbox" class="select-checkbox"></td>
+                                        <td><input type="checkbox" class="select-checkbox" value="{{ $pembelian->id }}" title="Pilih data"></td>
                                         <td>{{ $loop->iteration }}</td>
                                         <td>{{ $pembelian->tanggal_pembelian }} WIB</td>
                                         <td>{{ $pembelian->nama_produk }}</td>
                                         <td>{{ $pembelian->harga_satuan }}</td>
-                                        <td>{{ number_format($pembelian->jumlah_dibeli, 0, ',', '.') }}</td>
+                                        <td>{{ $pembelian->jumlah_dibeli }}</td>
                                         <td>{{ $pembelian->diskon }}%</td>
                                         <td>{{ $pembelian->total }}</td>
                                         <td>
@@ -166,58 +166,136 @@
 @section('script')
     <script>
         $(document).ready(function() {
-            function printSelectedData() {
-                var selectedRows = [];
-                // Mengumpulkan data yang dipilih
-                $('.table tbody input[type="checkbox"]:checked').each(function () {
-                    var row = $(this).closest('tr');
-                    var data = {
-                        No: row.find('td:eq(0)').text(),
-                        Tanggal: row.find('td:eq(1)').text(),
-                        NamaProduk: row.find('td:eq(2)').text(),
-                        Harga: row.find('td:eq(3)').text(),
-                        Jumlah: row.find('td:eq(4)').text(),
-                        Diskon: row.find('td:eq(5)').text(),
-                        Total: row.find('td:eq(6)').text(),
-                    };
-                    selectedRows.push(data);
-                });
-
-                // Membuat template cetak HTML
-                var printHtml = '<html><head><title>Struk Nota Belanja</title></head><body>';
-                printHtml += '<h2>Struk Nota Belanja</h2>';
-                printHtml += '<p>Nama Kasir: ' + '{{ Auth::user()->nama }}' + '</p>';
-                printHtml += '<p>Nama Toko: Octobake</p>';
-                printHtml += '<table>';
-                printHtml += '<tr><th>No.</th><th>Tanggal</th><th>Nama Produk</th><th>Harga</th><th>Jumlah</th><th>Diskon</th><th>Total</th></tr>';
-
-                for (var i = 0; i < selectedRows.length; i++) {
-                    printHtml += '<tr>';
-                    printHtml += '<td>' + selectedRows[i].No + '</td>';
-                    printHtml += '<td>' + selectedRows[i].Tanggal + '</td>';
-                    printHtml += '<td>' + selectedRows[i].NamaProduk + '</td>';
-                    printHtml += '<td>' + selectedRows[i].Harga + '</td>';
-                    printHtml += '<td>' + selectedRows[i].Jumlah + '</td>';
-                    printHtml += '<td>' + selectedRows[i].Diskon + '</td>';
-                    printHtml += '<td>' + selectedRows[i].Total + '</td>';
-                    printHtml += '</tr>';
-                }
-
-                printHtml += '</table>';
-                printHtml += '</body></html>';
-
-                var printWindow = window.open('', '', 'width=600,height=600');
-                printWindow.document.open();
-                printWindow.document.write(printHtml);
-                printWindow.document.close();
-                printWindow.print();
-                printWindow.close();
+            function strRepeat(str, count) {
+                return new Array(count + 1).join(str);
             }
 
-            $('#print-button').click(function () {
-                printSelectedData();
+            var selectedData = [];
+            $('#select-all').on('change', function() {
+                if (this.checked) {
+                    $('.select-checkbox').prop('checked', true);
+                    selectedData = $('.select-checkbox:checked').map(function() {
+                        return $(this).val();
+                    }).get();
+                } else {
+                    $('.select-checkbox').prop('checked', false);
+                    selectedData = [];
+                }
+            });
+            $('.table').on('change', '.select-checkbox', function() {
+                var id = $(this).val();
+                if ($(this).prop('checked')) {
+                    selectedData.push(id);
+                } else {
+                    selectedData = selectedData.filter(function(value) {
+                        return value !== id;
+                    });
+                }
+                if ($('.select-checkbox:checked').length === $('.select-checkbox').length) {
+                    $('#select-all').prop('checked', true);
+                } else {
+                    $('#select-all').prop('checked', false);
+                }
             });
 
+            $("#print-button").click(function() {
+                if (selectedData.length > 0) {
+                    $.ajax({
+                        type: "GET",
+                        url: "{{ route('pembelian_cetak') }}",
+                        data: {
+                            dataDipilih: selectedData,
+                            _token: '{{ csrf_token() }}',
+                        },
+                        success: function(response) {
+                            if (response.status == 'success') {
+                                var pembelians = response.pembelians;
+
+                                var now = new Date();
+                                var day = String(now.getDate()).padStart(2, '0');
+                                var month = String(now.getMonth() + 1).padStart(2, '0');
+                                var year = now.getFullYear();
+                                var hours = String(now.getHours()).padStart(2, '0');
+                                var minutes = String(now.getMinutes()).padStart(2, '0');
+                                var seconds = String(now.getSeconds()).padStart(2, '0');
+                                var currentDateTime = day + '-' + month + '-' + year + ' ' + hours + ':' + minutes + ':' + seconds;
+
+                                var totalItem = 0;
+                                var grandTotal = 0;
+                                var totalKeseluruhan = 0;
+                                var printHtml = '<!DOCTYPE html>\
+                                    <html>\
+                                        <head>\
+                                            <title>Cetak Nota</title>\
+                                            <style>@page {margin: 0}body {margin: 0;font-size: 10px;font-family: monospace;}td {font-size: 10px;}.sheet {margin: 0;overflow: hidden;position: relative;box-sizing: border-box;page-break-after: always;}/** Paper sizes **/body.struk .sheet {width: 58mm;}body.struk .sheet {padding: 2mm;}.txt-left {text-align: left;}.txt-center {text-align: center;}.txt-right {text-align: right;}/** For screen preview **/@media screen {body {background: #e0e0e0;font-family: monospace;}.sheet {background: white;box-shadow: 0 .5mm 2mm rgba(0, 0, 0, .3);margin: 5mm;}}/** Fix for Chrome issue #273306 **/@media print {body {font-family: monospace;}body.struk {width: 57.5mm;}body.struk .sheet {padding: 2mm;}.txt-left {text-align: left;}.txt-center {text-align: center;}.txt-right {text-align: right;}}</style>\
+                                        </head>\
+                                        <body class="struk" onload="printOut()">\
+                                            <section class="sheet">\
+                                                <table cellpadding="0" cellspacing="0" class="txt-center" width="100%">\
+                                                    <tr>\
+                                                        <td>Octobake</td>\
+                                                    </tr>\
+                                                    <tr>\
+                                                        <td>Madiun</td>\
+                                                    </tr>\
+                                                    <tr>\
+                                                        <td>Telp: 088888888888</td>\
+                                                    </tr>\
+                                                </table>\
+                                                <hr style="border-bottom: 1px dashed #000">\
+                                                <table cellpadding="0" cellspacing="0" style="width:100%">\
+                                                    <tr>\
+                                                        <td class="txt-left">Kasir</td>\
+                                                        <td class="txt-left">:&nbsp;</td>\
+                                                        <td class="txt-left">{{ Auth::user()->nama }}</td>\
+                                                    </tr>\
+                                                    <tr>\
+                                                        <td class="txt-left">Tgl.&nbsp;</td>\
+                                                        <td class="txt-left">:&nbsp;</td>\
+                                                        <td class="txt-left">'+currentDateTime+' WIB</td>\
+                                                    </tr>\
+                                                </table><br>\
+                                                <table cellpadding="0" cellspacing="0" style="width:100%">\
+                                                    <tr>\
+                                                        <td class="txt-left">Item</td>\
+                                                        <td class="txt-right">Diskon</td>\
+                                                        <td class="txt-right">Satuan</td>\
+                                                        <td class="txt-right">Total</td>\
+                                                    </tr>\
+                                                    <tr>\
+                                                        <td colspan="4"><hr style="border-bottom: 1px dashed #000"></td>\
+                                                    </tr>';
+                                pembelians.forEach(function(data) {
+                                    var harga = data.harga_satuan;
+                                    var total = data.total;
+                                    grandTotal += total;
+                                    var jumlahItem = data.jumlah_dibeli;
+                                    totalKeseluruhan += jumlahItem*harga;
+                                    totalItem += jumlahItem;
+                                    printHtml += '<tr><td colspan="4">'+data.nama_produk+'</td></tr><tr><td class="txt-left">'+jumlahItem+'&nbsp;</td><td class="txt-right">&nbsp;'+data.diskon+'%</td><td class="txt-right">&nbsp;Rp'+harga.toLocaleString('id-ID')+'</td><td class="txt-right">&nbsp;Rp'+total.toLocaleString('id-ID')+'</td></tr>';
+                                });
+                                totalHemat = totalKeseluruhan-grandTotal
+                                printHtml += '</table><hr style="border-bottom: 1px dashed #000"><table cellpadding="0" cellspacing="0" style="width:100%"><tr><td class="txt-left" style="font-weight: bold">Total Item &nbsp; '+totalItem+'</td><td class="txt-right" style="font-weight: bold">Rp'+grandTotal.toLocaleString('id-ID')+'</td></tr><tr><td class="txt-left">Anda Hemat</td><td class="txt-right">Rp'+totalHemat.toLocaleString('id-ID')+'</td></tr></table><p class="txt-center">* Terima kasih atas kunjungan anda *</p></section></body></html>';
+                                var printWindow = window.open();
+                                printWindow.document.open();
+                                printWindow.document.write(printHtml);
+                                printWindow.document.close();
+                                printWindow.print();
+                                printWindow.close();
+                            }
+                        },
+                        error: function(error) {
+                            console.error("Error:", error);
+                        }
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'Informasi',
+                        text: 'Pilih setidaknya satu item untuk dicetak.',
+                    });
+                }
+            });
 
             document.getElementById("btnTambahData").addEventListener("click", function () {
                 var inputTanggalPembelian = document.getElementById("tanggal_pembelian");
@@ -304,8 +382,9 @@
 
             $('.table').DataTable({
                 columnDefs: [
-                    { orderable: false, targets: [2, 3, 4, 5, 6, 7] },
+                    { orderable: false, targets: [0, 3, 4, 5, 6, 7, 8] },
                 ],
+                order: [[2, 'desc']],
                 language: {
                     lengthMenu: "Tampilkan _MENU_ data per halaman",
                     zeroRecords: "Data tidak ditemukan.",
