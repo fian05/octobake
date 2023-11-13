@@ -6,6 +6,9 @@
     <title>Login - Octobake</title>
     <link rel="shortcut icon" href="{{ asset('logo.png') }}">
     <link rel="stylesheet" id="css-main" href="{{ asset('css/oneui.min.css') }}">
+    <script src="{{ asset("js/lib/jquery.min.js") }}"></script>
+    <link rel="stylesheet" href="{{ asset("js/plugins/sweetalert2/sweetalert2.min.css") }}">
+    <script src="{{ asset("js/plugins/sweetalert2/sweetalert2.min.js") }}"></script>
   </head>
   <body>
     <!-- Page Container -->
@@ -65,8 +68,23 @@
     </div>
     <!-- END Page Container -->
     <script src="{{ asset('js/oneui.app.min.js') }}"></script>
-    <script src="{{ asset('js/lib/jquery.min.js') }}"></script>
     <script src="{{ asset('js/plugins/jquery-validation/jquery.validate.min.js') }}"></script>
     <script src="{{ asset('js/pages/op_auth_lock.min.js') }}"></script>
+    @if(Session::has('alert'))
+        <script>
+            let timerInterval
+            Swal.fire({
+                icon: '{{ Session::get('alert')['type'] }}',
+                title: '{{ Session::get('alert')['title'] }}',
+                html: '{{ Session::get('alert')['message'] }}',
+                showConfirmButton: false,
+                timer: 2500,
+                timerProgressBar: true,
+                willClose: () => {
+                    clearInterval(timerInterval)
+                }
+            });
+        </script>
+    @endif
   </body>
 </html>

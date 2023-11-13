@@ -24,6 +24,10 @@
                     </a>
                     <li class="nav-main-heading">Manajemen Data</li>
                     @if(Auth::user()->role == 'owner')
+                    <a class="nav-main-link" href="{{ route('toko_view') }}">
+                        <i class="nav-main-link-icon fa fa-store"></i>
+                        <span class="nav-main-link-name">Toko</span>
+                    </a>
                     <a class="nav-main-link" href="{{ route('karyawan_view') }}">
                         <i class="nav-main-link-icon fa fa-users"></i>
                         <span class="nav-main-link-name">Karyawan</span>

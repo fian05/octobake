@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Pembelian;
 use App\Models\Produk;
+use App\Models\Toko;
 use Illuminate\Http\Request;
 
 class PembelianController extends Controller
@@ -106,9 +107,11 @@ class PembelianController extends Controller
     public function print(Request $request) {
         $dataDipilih = $request->dataDipilih;
         if($dataDipilih) {
+            $toko = Toko::all();
             $pembelians = Pembelian::whereIn('id', $dataDipilih)->get();
             return response()->json([
                 'status' => 'success',
+                'toko' => $toko,
                 'pembelians' => $pembelians,
             ]);
         } else {

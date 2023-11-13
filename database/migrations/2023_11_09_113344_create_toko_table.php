@@ -11,8 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('laporan', function (Blueprint $table) {
+        Schema::create('toko', function (Blueprint $table) {
             $table->id();
+            $table->string('nama_toko');
+            $table->string('logo_toko');
+            $table->string('nohp_toko');
+            $table->string('ig_toko');
+            $table->string('alamat_toko');
             $table->timestamps();
         });
     }
@@ -22,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('laporan');
+        Schema::dropIfExists('toko');
     }
 };

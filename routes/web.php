@@ -1,6 +1,8 @@
 <?php
 
+use App\Models\Toko;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\TokoController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProdukController;
 use App\Http\Controllers\LaporanController;
@@ -19,8 +21,18 @@ use App\Http\Controllers\PembelianController;
 */
 
 Route::get('/', function () {
+    if (Toko::count() === 0) {
+        return redirect()->route('toko_aktivasi');
+    }
+    if(Auth()->check()) {
+        return back();
+    }
     return view('login');
 })->name('login');
+Route::middleware('cek.data.toko')->group(function() {
+    Route::get('toko/aktivasi', [TokoController::class, 'aktivasi'])->name('toko_aktivasi');
+    Route::post('toko/aktivasi/proses', [TokoController::class, 'aktivasi_proses'])->name('aktivasi_proses');
+});
 Route::post('login_proses', [UserController::class, 'login'])->name('login_proses');
 Route::middleware('auth')->group(function() {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
@@ -29,6 +41,9 @@ Route::middleware('auth')->group(function() {
     Route::put('updatePw', [UserController::class, 'updatePw'])->name('karyawan_updatePw');
     Route::put('{id}/reset', [UserController::class, 'resetPw'])->name('karyawan_reset');
     
+    Route::get('toko', [TokoController::class, 'index'])->name('toko_view');
+    Route::put('toko/ubah', [TokoController::class, 'update'])->name('toko_ubah');
+
     Route::get('karyawan', [UserController::class, 'index'])->name('karyawan_view');
     Route::post('karyawan/tambah', [UserController::class, 'store'])->name('karyawan_tambah');
     Route::put('karyawan/ubah', [UserController::class, 'update'])->name('karyawan_ubah');

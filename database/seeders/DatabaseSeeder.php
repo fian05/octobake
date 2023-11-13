@@ -14,12 +14,12 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // Admin
-        User::create([
-            'nama' => 'Ditowner',
-            'username' => 'dito',
-            'password' => bcrypt('12345678'),
-            'role' => 'owner',
-        ]);
+        // User::create([
+        //     'nama' => 'Ditowner',
+        //     'username' => 'dito',
+        //     'password' => bcrypt('12345678'),
+        //     'role' => 'owner',
+        // ]);
         User::create([
             'nama' => 'Faryawan',
             'username' => 'farhan',

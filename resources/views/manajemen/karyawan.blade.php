@@ -187,45 +187,11 @@
                 }
             });
         });
-        var btnTambah = document.getElementById('btn-tambah');
-        btnTambah.addEventListener('click', function (e) {
-            e.preventDefault(); // Mencegah pengiriman form langsung
-            // Tampilkan SweetAlert untuk konfirmasi
-            Swal.fire({
-                title: 'Konfirmasi',
-                text: 'Apakah data yang Anda input sudah benar?',
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonText: 'Ya',
-                cancelButtonText: 'Tidak'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    document.getElementById('form-tambah').submit();
-                }
-            });
-        });
         function ubah(data) {
             document.getElementById('nama_karyawan').value = data['nama'];
             document.getElementById('username_karyawan').value = data['username'];
             document.getElementById('id').value = data['id'];
         }
-        var btnUbah = document.getElementById('btn-ubah');
-        btnUbah.addEventListener('click', function (e) {
-            e.preventDefault(); // Mencegah pengiriman form langsung
-            // Tampilkan SweetAlert untuk konfirmasi
-            Swal.fire({
-                title: 'Konfirmasi',
-                text: 'Apakah data yang Anda input sudah benar?',
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonText: 'Ya',
-                cancelButtonText: 'Tidak'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    document.getElementById('form-ubah').submit();
-                }
-            });
-        });
         $(document).on('click', '.delete-link', function(e) {
             e.preventDefault();
             var id = $(this).attr('id').split('-')[2];

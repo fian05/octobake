@@ -97,7 +97,7 @@
         </div>
     </main>
 
-    <div class="modal fade" id="modal" tabindex="-1" aria-hidden="true">
+    <div class="modal fade" id="modal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <form id="formTambahData" method="POST" action="{{ route('pembelian_tambah') }}">
@@ -200,94 +200,7 @@
 
             $("#print-button").click(function() {
                 if (selectedData.length > 0) {
-                    $.ajax({
-                        type: "GET",
-                        url: "{{ route('pembelian_cetak') }}",
-                        data: {
-                            dataDipilih: selectedData,
-                            _token: '{{ csrf_token() }}',
-                        },
-                        success: function(response) {
-                            if (response.status == 'success') {
-                                var pembelians = response.pembelians;
-
-                                var now = new Date();
-                                var day = String(now.getDate()).padStart(2, '0');
-                                var month = String(now.getMonth() + 1).padStart(2, '0');
-                                var year = now.getFullYear();
-                                var hours = String(now.getHours()).padStart(2, '0');
-                                var minutes = String(now.getMinutes()).padStart(2, '0');
-                                var seconds = String(now.getSeconds()).padStart(2, '0');
-                                var currentDateTime = day + '-' + month + '-' + year + ' ' + hours + ':' + minutes + ':' + seconds;
-
-                                var totalItem = 0;
-                                var grandTotal = 0;
-                                var totalKeseluruhan = 0;
-                                var printHtml = '<!DOCTYPE html>\
-                                    <html>\
-                                        <head>\
-                                            <title>Cetak Nota</title>\
-                                            <style>@page {margin: 0}body {margin: 0;font-size: 10px;font-family: monospace;}td {font-size: 10px;}.sheet {margin: 0;overflow: hidden;position: relative;box-sizing: border-box;page-break-after: always;}/** Paper sizes **/body.struk .sheet {width: 58mm;}body.struk .sheet {padding: 2mm;}.txt-left {text-align: left;}.txt-center {text-align: center;}.txt-right {text-align: right;}/** For screen preview **/@media screen {body {background: #e0e0e0;font-family: monospace;}.sheet {background: white;box-shadow: 0 .5mm 2mm rgba(0, 0, 0, .3);margin: 5mm;}}/** Fix for Chrome issue #273306 **/@media print {body {font-family: monospace;}body.struk {width: 57.5mm;}body.struk .sheet {padding: 2mm;}.txt-left {text-align: left;}.txt-center {text-align: center;}.txt-right {text-align: right;}}</style>\
-                                        </head>\
-                                        <body class="struk" onload="printOut()">\
-                                            <section class="sheet">\
-                                                <table cellpadding="0" cellspacing="0" class="txt-center" width="100%">\
-                                                    <tr>\
-                                                        <td>Octobake</td>\
-                                                    </tr>\
-                                                    <tr>\
-                                                        <td>Madiun</td>\
-                                                    </tr>\
-                                                    <tr>\
-                                                        <td>Telp: 088888888888</td>\
-                                                    </tr>\
-                                                </table>\
-                                                <hr style="border-bottom: 1px dashed #000">\
-                                                <table cellpadding="0" cellspacing="0" style="width:100%">\
-                                                    <tr>\
-                                                        <td class="txt-left">Kasir</td>\
-                                                        <td class="txt-left">:&nbsp;</td>\
-                                                        <td class="txt-left">{{ Auth::user()->nama }}</td>\
-                                                    </tr>\
-                                                    <tr>\
-                                                        <td class="txt-left">Tgl.&nbsp;</td>\
-                                                        <td class="txt-left">:&nbsp;</td>\
-                                                        <td class="txt-left">'+currentDateTime+' WIB</td>\
-                                                    </tr>\
-                                                </table><br>\
-                                                <table cellpadding="0" cellspacing="0" style="width:100%">\
-                                                    <tr>\
-                                                        <td class="txt-left">Item</td>\
-                                                        <td class="txt-right">Diskon</td>\
-                                                        <td class="txt-right">Satuan</td>\
-                                                        <td class="txt-right">Total</td>\
-                                                    </tr>\
-                                                    <tr>\
-                                                        <td colspan="4"><hr style="border-bottom: 1px dashed #000"></td>\
-                                                    </tr>';
-                                pembelians.forEach(function(data) {
-                                    var harga = data.harga_satuan;
-                                    var total = data.total;
-                                    grandTotal += total;
-                                    var jumlahItem = data.jumlah_dibeli;
-                                    totalKeseluruhan += jumlahItem*harga;
-                                    totalItem += jumlahItem;
-                                    printHtml += '<tr><td colspan="4">'+data.nama_produk+'</td></tr><tr><td class="txt-left">'+jumlahItem+'&nbsp;</td><td class="txt-right">&nbsp;'+data.diskon+'%</td><td class="txt-right">&nbsp;Rp'+harga.toLocaleString('id-ID')+'</td><td class="txt-right">&nbsp;Rp'+total.toLocaleString('id-ID')+'</td></tr>';
-                                });
-                                totalHemat = totalKeseluruhan-grandTotal
-                                printHtml += '</table><hr style="border-bottom: 1px dashed #000"><table cellpadding="0" cellspacing="0" style="width:100%"><tr><td class="txt-left" style="font-weight: bold">Total Item &nbsp; '+totalItem+'</td><td class="txt-right" style="font-weight: bold">Rp'+grandTotal.toLocaleString('id-ID')+'</td></tr><tr><td class="txt-left">Anda Hemat</td><td class="txt-right">Rp'+totalHemat.toLocaleString('id-ID')+'</td></tr></table><p class="txt-center">* Terima kasih atas kunjungan anda *</p></section></body></html>';
-                                var printWindow = window.open();
-                                printWindow.document.open();
-                                printWindow.document.write(printHtml);
-                                printWindow.document.close();
-                                printWindow.print();
-                                printWindow.close();
-                            }
-                        },
-                        error: function(error) {
-                            console.error("Error:", error);
-                        }
-                    });
+                    cetak();
                 } else {
                     Swal.fire({
                         icon: 'info',
@@ -296,6 +209,193 @@
                     });
                 }
             });
+
+            function cetak() {
+                $.ajax({
+                    type: "GET",
+                    url: "{{ route('pembelian_cetak') }}",
+                    data: {
+                        dataDipilih: selectedData,
+                        _token: '{{ csrf_token() }}',
+                    },
+                    success: function(response) {
+                        if (response.status == 'success') {
+                            var toko = response.toko;
+                            var pembelians = response.pembelians;
+
+                            var now = new Date();
+                            var day = String(now.getDate()).padStart(2, '0');
+                            var month = String(now.getMonth() + 1).padStart(2, '0');
+                            var year = now.getFullYear();
+                            var hours = String(now.getHours()).padStart(2, '0');
+                            var minutes = String(now.getMinutes()).padStart(2, '0');
+                            var seconds = String(now.getSeconds()).padStart(2, '0');
+                            var currentDateTime = day + '-' + month + '-' + year + ' ' + hours + ':' + minutes + ':' + seconds;
+
+                            // Preview
+                            var totalItem2 = 0;
+                            var grandTotal2 = 0;
+                            var totalKeseluruhan2 = 0;
+                            var previewHtml = '';
+                            previewHtml += "<table cellpadding='0' cellspacing='0' style='width:100%''><tr><td style='text-align: left;'>Item</td><td style='text-align: right;'>Diskon</td><td style='text-align: right;'>Satuan</td><td style='text-align: right;'>Total</td></tr><tr><td colspan='4'><hr style='border-bottom: 1px dashed #000'></td></tr>";
+                            pembelians.forEach(function(data) {
+                                var harga = data.harga_satuan;
+                                var total = data.total;
+                                grandTotal2 += total;
+                                var jumlahItem = data.jumlah_dibeli;
+                                totalKeseluruhan2 += jumlahItem*harga;
+                                totalItem2 += jumlahItem;
+                                previewHtml += '<tr><td colspan="4" style="text-align: left;">'+data.nama_produk+'</td></tr><tr><td style="text-align: left;">'+jumlahItem+'&nbsp;</td><td style="text-align: right;">&nbsp;'+data.diskon+'%</td><td style="text-align: right;">&nbsp;Rp'+harga.toLocaleString('id-ID')+'</td><td style="text-align: right;">&nbsp;Rp'+total.toLocaleString('id-ID')+'</td></tr>';
+                            });
+                            totalHemat2 = totalKeseluruhan2-grandTotal2
+                            previewHtml += "</table><hr style='border-bottom: 1px dashed #000'><table width='100%'><tr><td style='text-align: left;'>Total item &nbsp; "+totalItem2+"</td><td style='text-align: right;'>Rp"+totalKeseluruhan2.toLocaleString('id-ID')+"</td></tr><tr><td style='text-align: left;'>Diskon</td><td style='text-align: right;'>Rp"+totalHemat2.toLocaleString('id-ID')+"</td></tr><tr><td style='text-align: left; font-weight: bold'>Total setelah diskon</td><td style='text-align: right; font-weight: bold'>Rp<span id='total-pembelian'>"+grandTotal2.toLocaleString('id-ID')+"</span></td></tr></table>\
+                            <p style='text-align: left; margin: 0; padding: 0;'>Uang pembeli:</p><input type='number' class='swal2-input mx-0 my-3 w-100' autocapitalize='none' step='1' min='0' max='9999999999999' maxlength='13' id='swal-input' placeholder='Input uang pembeli' required>\
+                            <table id='kembalian' width='100%'><tr><td style='text-align: left;'>Kembalian</td><td style='text-align: right;'><span id='nominal-kembalian'></span></td></tr></table>";
+
+                            var uangPembeli = 0;
+                            var kembalian = 0;
+
+                            Swal.fire({
+                                title: "Konfirmasi Cetak Nota",
+                                html: previewHtml,
+                                showCancelButton: true,
+                                confirmButtonText: "Cetak Nota",
+                                allowOutsideClick: false,
+                                didOpen: () => {
+                                    const inputContainer = Swal.getContainer().querySelector('#swal-input');
+                                    const additionalText = Swal.getContainer().querySelector('#kembalian');
+                                    inputContainer.parentNode.insertBefore(additionalText, inputContainer.nextSibling);
+                                    $('#swal-input').focus();
+                                    $('#swal-input').on('input', function() {
+                                        if (this.value.length > this.maxLength){
+                                            this.value = this.value.slice(0, this.maxLength);
+                                        }
+                                        var totalBelanja = parseFloat($('#total-pembelian').text().replace(/\./g, ''));
+                                        uangPembeli = parseFloat($(this).val());
+                                        if (isNaN(uangPembeli)) {
+                                            $('#nominal-kembalian').text('-');
+                                            return;
+                                        }
+                                        kembalian = uangPembeli-totalBelanja;
+                                        if (kembalian < 0) {
+                                        $('#nominal-kembalian').text('Uang pembeli kurang!');
+                                        return;
+                                        }
+                                        $('#nominal-kembalian').text('Rp'+kembalian.toLocaleString('id-ID'));
+                                    });
+                                    $('#swal-input').on('keyup', function (event) {
+                                        if (event.key === 'Enter') {
+                                            Swal.clickConfirm();
+                                        }
+                                    });
+                                },
+                            }).then((result) => {
+                                var isUangPembeliFilled = $('#swal-input').is(':valid');
+                                if (result.isConfirmed && isUangPembeliFilled) {
+                                    // Cetak
+                                    var totalItem = 0;
+                                    var grandTotal = 0;
+                                    var totalKeseluruhan = 0;
+                                    var printHtml = '';
+                                    toko.forEach(function(data) {
+                                        printHtml += '<!DOCTYPE html>\
+                                            <html>\
+                                                <head>\
+                                                    <title>Cetak Nota</title>\
+                                                    <style>@page {margin: 0}body {margin: 0;font-size: 10px;font-family: monospace;}td {font-size: 10px;}.sheet {margin: 0;overflow: hidden;position: relative;box-sizing: border-box;page-break-after: always;}/** Paper sizes **/body.struk .sheet {width: 58mm;}body.struk .sheet {padding: 2mm;}.txt-left {text-align: left;}.txt-center {text-align: center;}.txt-right {text-align: right;}/** For screen preview **/@media screen {body {background: #e0e0e0;font-family: monospace;}.sheet {background: white;box-shadow: 0 .5mm 2mm rgba(0, 0, 0, .3);margin: 5mm;}}/** Fix for Chrome issue #273306 **/@media print {body {font-family: monospace;}body.struk {width: 57.5mm;}body.struk .sheet {padding: 2mm;}.txt-left {text-align: left;}.txt-center {text-align: center;}.txt-right {text-align: right;}}</style>\
+                                                </head>\
+                                                <body class="struk" onload="printOut()">\
+                                                    <section class="sheet">\
+                                                        <table cellpadding="0" cellspacing="0" class="txt-center" width="100%">\
+                                                            <tr>\
+                                                                <td>'+data.nama_toko+'</td>\
+                                                            </tr>\
+                                                            <tr>\
+                                                                <td>'+data.alamat_toko+'</td>\
+                                                            </tr>\
+                                                            <tr>\
+                                                                <td><svg xmlns="http://www.w3.org/2000/svg" class="bi bi-whatsapp" fill="currentColor" width="9" height="9" viewBox="0 0 16 16"><path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.920l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.430.050-.197-.100-.836-.308-1.592-.985-.590-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.100-.114.133-.198.198-.330.065-.134.034-.248-.015-.347-.050-.099-.445-1.076-.612-1.470-.160-.389-.323-.335-.445-.340-.114-.007-.247-.007-.380-.007a.729.729 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.710 1.916.810 2.049.098.133 1.394 2.132 3.383 2.992.470.205.840.326 1.129.418.475.152.904.129 1.246.080.380-.058 1.171-.480 1.338-.943.164-.464.164-.860.114-.943-.049-.084-.182-.133-.380-.232z"/></svg> 0'+data.nohp_toko+'</td>\
+                                                            </tr>\
+                                                            <tr>\
+                                                                <td><svg xmlns="http://www.w3.org/2000/svg" class="bi bi-instagram" fill="currentColor" width="9" height="9" viewBox="0 0 16 16"><path d="M8 0C5.829 0 5.556.01 4.703.048 3.85.088 3.269.222 2.76.42a3.917 3.917 0 0 0-1.417.923A3.927 3.927 0 0 0 .42 2.76C.222 3.268.087 3.85.048 4.7.01 5.555 0 5.827 0 8.001c0 2.172.01 2.444.048 3.297.04.852.174 1.433.372 1.942.205.526.478.972.923 1.417.444.445.89.719 1.416.923.51.198 1.09.333 1.942.372C5.555 15.99 5.827 16 8 16s2.444-.01 3.298-.048c.851-.04 1.434-.174 1.943-.372a3.916 3.916 0 0 0 1.416-.923c.445-.445.718-.891.923-1.417.197-.509.332-1.09.372-1.942C15.99 10.445 16 10.173 16 8s-.01-2.445-.048-3.299c-.04-.851-.175-1.433-.372-1.941a3.926 3.926 0 0 0-.923-1.417A3.911 3.911 0 0 0 13.24.42c-.51-.198-1.092-.333-1.943-.372C10.443.01 10.172 0 7.998 0h.003zm-.717 1.442h.718c2.136 0 2.389.007 3.232.046.78.035 1.204.166 1.486.275.373.145.64.319.92.599.28.28.453.546.598.92.11.281.24.705.275 1.485.039.843.047 1.096.047 3.231s-.008 2.389-.047 3.232c-.035.78-.166 1.203-.275 1.485a2.47 2.47 0 0 1-.599.919c-.28.28-.546.453-.92.598-.28.11-.704.24-1.485.276-.843.038-1.096.047-3.232.047s-2.39-.009-3.233-.047c-.78-.036-1.203-.166-1.485-.276a2.478 2.478 0 0 1-.92-.598 2.48 2.48 0 0 1-.6-.92c-.109-.281-.24-.705-.275-1.485-.038-.843-.046-1.096-.046-3.233 0-2.136.008-2.388.046-3.231.036-.78.166-1.204.276-1.486.145-.373.319-.64.599-.92.28-.28.546-.453.92-.598.282-.11.705-.24 1.485-.276.738-.034 1.024-.044 2.515-.045v.002zm4.988 1.328a.96.96 0 1 0 0 1.92.96.96 0 0 0 0-1.92zm-4.27 1.122a4.109 4.109 0 1 0 0 8.217 4.109 4.109 0 0 0 0-8.217zm0 1.441a2.667 2.667 0 1 1 0 5.334 2.667 2.667 0 0 1 0-5.334z"/></svg> @'+data.ig_toko+'</td>\
+                                                            </tr>\
+                                                        </table>\
+                                                        <hr style="border-bottom: 1px dashed #000">\
+                                                        <table cellpadding="0" cellspacing="0" style="width:100%">\
+                                                            <tr>\
+                                                                <td class="txt-left">Kasir</td>\
+                                                                <td class="txt-left">:&nbsp;</td>\
+                                                                <td class="txt-left">{{ Auth::user()->nama }}</td>\
+                                                            </tr>\
+                                                            <tr>\
+                                                                <td class="txt-left">Tgl.&nbsp;</td>\
+                                                                <td class="txt-left">:&nbsp;</td>\
+                                                                <td class="txt-left">'+currentDateTime+' WIB</td>\
+                                                            </tr>\
+                                                        </table><br>\
+                                                        <table cellpadding="0" cellspacing="0" style="width:100%">\
+                                                            <tr>\
+                                                                <td class="txt-left">Item</td>\
+                                                                <td class="txt-right">Diskon</td>\
+                                                                <td class="txt-right">Satuan</td>\
+                                                                <td class="txt-right">Total</td>\
+                                                            </tr>\
+                                                            <tr>\
+                                                                <td colspan="4"><hr style="border-bottom: 1px dashed #000"></td>\
+                                                            </tr>';
+                                    });
+                                    pembelians.forEach(function(data) {
+                                        var harga = data.harga_satuan;
+                                        var total = data.total;
+                                        grandTotal += total;
+                                        var jumlahItem = data.jumlah_dibeli;
+                                        totalKeseluruhan += jumlahItem*harga;
+                                        totalItem += jumlahItem;
+                                        printHtml += '<tr><td colspan="4">'+data.nama_produk+'</td></tr><tr><td class="txt-left">'+jumlahItem+'&nbsp;</td><td class="txt-right">&nbsp;'+data.diskon+'%</td><td class="txt-right">&nbsp;Rp'+harga.toLocaleString('id-ID')+'</td><td class="txt-right">&nbsp;Rp'+total.toLocaleString('id-ID')+'</td></tr>';
+                                    });
+                                    totalHemat = totalKeseluruhan-grandTotal
+                                    printHtml += '</table><hr style="border-bottom: 1px dashed #000"><table cellpadding="0" cellspacing="0" style="width:100%"><tr><td class="txt-left">Total item &nbsp; '+totalItem+'</td><td class="txt-right">Rp'+totalKeseluruhan.toLocaleString('id-ID')+'</td></tr><tr><td class="txt-left">Diskon</td><td class="txt-right">Rp'+totalHemat.toLocaleString('id-ID')+'</td></tr><tr><td class="txt-left" style="font-weight: bold">Total setelah diskon</td><td class="txt-right" style="font-weight: bold">Rp'+grandTotal.toLocaleString('id-ID')+'</td></tr><tr><td class="txt-left">Bayar</td><td class="txt-right">Rp'+uangPembeli.toLocaleString('id-ID')+'</td></tr><tr><td class="txt-left">Kembalian</td><td class="txt-right">Rp'+kembalian.toLocaleString('id-ID')+'</td></tr></table><p class="txt-center">* Terima kasih atas kunjungan anda *</p></section></body></html>';
+                                    
+                                    var dpi = 100; // DPI perangkat
+                                    // Buat sementara elemen div untuk menempatkan HTML
+                                    var tempDiv = document.createElement('div');
+                                    tempDiv.innerHTML = printHtml;
+                                    // Tambahkan elemen ke dalam dokumen, tetapi luar jangkauan pengguna
+                                    tempDiv.style.position = 'absolute';
+                                    tempDiv.style.left = '-9999px';
+                                    document.body.appendChild(tempDiv);
+                                    // Hitung tinggi elemen
+                                    var htmlHeight = tempDiv.offsetHeight;
+                                    // Konversi tinggi dalam sentimeter
+                                    var inchToCm = 2.54;
+                                    var htmlHeightInCm = (htmlHeight / dpi) * inchToCm;
+                                    // Hapus elemen sementara
+                                    document.body.removeChild(tempDiv);
+                                    // Tampilkan hasil di console
+                                    console.log("Tinggi Object yang diprint: "+htmlHeight+" pixel, atau "+htmlHeightInCm+" cm");
+                                    
+                                    var printWindow = window.open();
+                                    printWindow.document.open();
+                                    printWindow.document.write(printHtml);
+                                    printWindow.document.close();
+                                    printWindow.print();
+                                    printWindow.close();
+                                } else {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Error',
+                                        text: 'Nominal uang pembeli belum diinput!',
+                                        confirmButtonText: 'Tutup',
+                                    });
+                                }
+                            });
+                        }
+                    },
+                    error: function(error) {
+                        console.error("Error:", error);
+                    }
+                });
+            }
 
             document.getElementById("btnTambahData").addEventListener("click", function () {
                 var inputTanggalPembelian = document.getElementById("tanggal_pembelian");

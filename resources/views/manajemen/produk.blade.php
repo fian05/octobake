@@ -110,7 +110,7 @@
         </div>
     </main>
 
-    <div class="modal fade" id="modal" tabindex="-1" aria-hidden="true">
+    <div class="modal fade" id="modal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
         <div class="modal-dialog modal-lg">
             <form id="form-tambah" method="POST" action="{{ route('produk_tambah') }}" enctype="multipart/form-data">
                 @csrf
@@ -154,7 +154,7 @@
         </div>
     </div>
 
-    <div class="modal fade" id="modalUbah" tabindex="-1" aria-hidden="true">
+    <div class="modal fade" id="modalUbah" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
         <div class="modal-dialog modal-lg">
             <form id="form-ubah" method="POST" action="{{ route('produk_ubah') }}" enctype="multipart/form-data">
                 @csrf
