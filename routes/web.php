@@ -20,15 +20,7 @@ use App\Http\Controllers\PembelianController;
 |
 */
 
-Route::get('/', function () {
-    if (Toko::count() === 0) {
-        return redirect()->route('toko_aktivasi');
-    }
-    if(Auth()->check()) {
-        return back();
-    }
-    return view('login');
-})->name('login');
+Route::get('/', [DashboardController::class, 'login'])->name('login');
 Route::middleware('cek.data.toko')->group(function() {
     Route::get('toko/aktivasi', [TokoController::class, 'aktivasi'])->name('toko_aktivasi');
     Route::post('toko/aktivasi/proses', [TokoController::class, 'aktivasi_proses'])->name('aktivasi_proses');
@@ -60,4 +52,6 @@ Route::middleware('auth')->group(function() {
     Route::get('pembelian/cetak', [PembelianController::class, 'print'])->name('pembelian_cetak');
     
     Route::get('laporan', [LaporanController::class, 'index'])->name('laporan_view');
+    Route::get('laporan/mingguan', [LaporanController::class, 'mingguan'])->name('laporan_view_mingguan');
+    Route::get('laporan/bulanan', [LaporanController::class, 'bulanan'])->name('laporan_view_bulanan');
 });

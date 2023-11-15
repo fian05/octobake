@@ -15,10 +15,9 @@
     <script src="{{ asset('js/plugins/datatables-buttons-pdfmake/pdfmake.min.js') }}"></script>
     <script src="{{ asset('js/plugins/datatables-buttons/buttons.html5.min.js') }}"></script>
     <script src="{{ asset('js/plugins/datatables-buttons-pdfmake/vfs_fonts.js') }}"></script>
-    {{-- Keperluan Pilih Tanggal --}}
-    <script src="{{ asset('js/plugins/daterangepicker/moment.min.js') }}"></script>
-    <link rel="stylesheet" href="{{ asset('js/plugins/daterangepicker/daterangepicker.css') }}">
-    <script src="{{ asset('js/plugins/daterangepicker/daterangepicker.min.js') }}"></script>
+    {{-- Keperluan Pilih Bulan Tahun --}}
+    <link rel="stylesheet" href="{{ asset('js/plugins/bootstrap-datepicker/css/bootstrap-datepicker.min.css') }}">
+    <script src="{{ asset('js/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js') }}"></script>
 @endsection
 
 @section('content')
@@ -28,10 +27,10 @@
                 <div class="d-flex flex-column flex-sm-row justify-content-sm-between align-items-sm-center py-2">
                     <div class="flex-grow-1">
                         <h1 class="h3 fw-bold mb-2">
-                            Data Laporan Keuangan Harian
+                            Data Laporan Keuangan Bulanan
                         </h1>
                         <h2 class="fs-base lh-base fw-medium text-muted mb-0">
-                            Halaman untuk melihat data laporan keuangan harian di {{ app('App\Models\Toko')::first()->nama_toko }}.
+                            Halaman untuk melihat data laporan keuangan bulanan di {{ app('App\Models\Toko')::first()->nama_toko }}.
                         </h2>
                     </div>
                     <nav class="flex-shrink-0 mt-3 mt-sm-0 ms-sm-3" aria-label="breadcrumb">
@@ -40,7 +39,7 @@
                                 <a href="{{ route('dashboard') }}" class="link-fx">Dashboard</a>
                             </li>
                             <li class="breadcrumb-item" aria-current="page">
-                                Laporan Keuangan Harian
+                                Laporan Keuangan Bulanan
                             </li>
                         </ol>
                     </nav>
@@ -48,19 +47,19 @@
             </div>
         </div>
         <div class="content">
-            <form action="{{ route('laporan_view') }}" method="GET">
+            <form action="{{ route('laporan_view_bulanan') }}" method="GET">
                 <div class="mb-3">
-                    <label for="tanggal" class="form-label">Pilih Tanggal:</label>
-                    <input type="text" class="form-control" id="tanggal" name="tanggal" value="{{ $tanggal }}" required readonly>
+                    <label for="bulan_tahun" class="form-label">Pilih Bulan dan Tahun:</label>
+                    <input type="text" class="form-control" id="bulan_tahun" name="bulan_tahun" value="{{ $bulan_tahun }}" required readonly>
                 </div>
                 <button type="submit" class="btn btn-primary">Tampilkan Laporan</button>
-            </form>
+            </form>            
         </div>
         <div class="content">
             <div class="block block-rounded">
                 <div class="block-header block-header-default">
                     <h3 class="block-title">
-                        Laporan Keuangan Tanggal {{ date('d F Y', strtotime($tanggal)) }}
+                        Laporan Keuangan Bulan {{ date('F Y', strtotime($bulan_tahun)) }}
                     </h3>
                     <div class="block-options">
                         {{-- <a role="button" id="btnPDF" class="btn text-primary btn-block-option" data-bs-toggle="modal" data-bs-target="#modal"><i class="fa fa-download"></i> PDF</a> --}}
@@ -116,23 +115,12 @@
 @section('script')
     <script>
         $(document).ready(function() {
-            $('#tanggal').daterangepicker({
-                singleDatePicker: true,
-                showDropdowns: true,
-                autoUpdateInput: false,
-                locale: {
-                    format: 'YYYY-MM-DD',
-                    cancelLabel: 'Clear'
-                },
-                maxDate: moment(),
-            });
-            // Menangani perubahan tanggal pada Daterangepicker
-            $('#tanggal').on('apply.daterangepicker', function(ev, picker) {
-                $(this).val(picker.startDate.format('YYYY-MM-DD'));
-            });
-            // Menangani penghapusan tanggal pada Daterangepicker
-            $('#tanggal').on('cancel.daterangepicker', function(ev, picker) {
-                $(this).val("{{ date('Y-m-d') }}");
+            $("#bulan_tahun").datepicker({
+                format: "yyyy-mm",
+                viewMode: "months",
+                minViewMode: "months",
+                autoclose: true,
+                endDate: new Date(new Date().setDate(new Date().getMonth())),
             });
             var table = $('.table').DataTable({
                 dom: 'Bfrtip',

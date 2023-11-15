@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Pembelian;
+use App\Models\Toko;
 use Illuminate\Support\Carbon;
 
 class DashboardController extends Controller
@@ -59,5 +60,15 @@ class DashboardController extends Controller
         $dataBulananJson = json_encode($dataBulanan);
 
         return view('dashboard', compact('dataHarianJson', 'dataMingguanJson', 'dataBulananJson'));
+    }
+    public function login() {
+        if (Toko::count() === 0) {
+            return redirect()->route('toko_aktivasi');
+        }
+        if(Auth()->check()) {
+            return back();
+        }
+        $toko = Toko::first();
+        return view('login', compact('toko'));
     }
 }

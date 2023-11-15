@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <title>@yield('title') - Octobake</title>
+    <title>@yield('title') - {{ app('App\Models\Toko')::first()->nama_toko }}</title>
     <link rel="shortcut icon" href="{{ asset('logo.png') }}">
     <link rel="stylesheet" id="css-main" href="{{ asset('css/oneui.min.css') }}">
     <script src="{{ asset("js/lib/jquery.min.js") }}"></script>
@@ -23,7 +23,7 @@
                         Create with <i class="fa fa-heart text-danger"></i>
                     </div>
                     <div class="col-sm-6 order-sm-1 py-1 text-center text-sm-start">
-                        <a class="fw-semibold" role="button">Octobake</a> &copy; <span data-toggle="year-copy"></span>
+                        <a class="fw-semibold" role="button">{{ app('App\Models\Toko')::first()->nama_toko }}</a> &copy; <span data-toggle="year-copy"></span>
                     </div>
                 </div>
             </div>
@@ -47,7 +47,8 @@
         </script>
     @endif
     <script>
-        var currentUrl=window.location.href;var navLinks=document.querySelectorAll('a.nav-main-link');for(var i=0;i<navLinks.length;i++){if(navLinks[i].getAttribute('href')===currentUrl){navLinks[i].classList.add('active');}else{navLinks[i].classList.remove('active');}}
+        var currentUrl=window.location.origin+window.location.pathname;;var navLinks=document.querySelectorAll('a.nav-main-link');for(var i=0;i<navLinks.length;i++){if(navLinks[i].getAttribute('href')===currentUrl){navLinks[i].classList.add('active');}else{navLinks[i].classList.remove('active');}}
+        var navItems = document.querySelectorAll('.nav-main-item');for(var i=0;i<navItems.length;i++){var submenuLinks=navItems[i].querySelectorAll('.nav-main-link-submenu');var links=navItems[i].querySelectorAll('a.nav-main-link');for(var j=0;j<links.length;j++){if(links[j].getAttribute('href')===currentUrl){links[j].classList.add('active');navItems[i].classList.add('open');}else{links[j].classList.remove('active');}}}
     </script>
     @yield('script')
 </body>

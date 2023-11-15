@@ -20,7 +20,7 @@
                             Manajemen Data Karyawan
                         </h1>
                         <h2 class="fs-base lh-base fw-medium text-muted mb-0">
-                            Halaman untuk manajemen data karyawan di Octobake.
+                            Halaman untuk manajemen data karyawan di {{ app('App\Models\Toko')::first()->nama_toko }}.
                         </h2>
                     </div>
                     <nav class="flex-shrink-0 mt-3 mt-sm-0 ms-sm-3" aria-label="breadcrumb">
