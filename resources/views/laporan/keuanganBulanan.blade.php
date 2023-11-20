@@ -8,13 +8,6 @@
     <link rel="stylesheet" href="{{ asset('js/plugins/datatables-bs5/css/dataTables.bootstrap5.min.css') }}">
     <script src="{{ asset('js/plugins/datatables/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('js/plugins/datatables-bs5/js/dataTables.bootstrap5.min.js') }}"></script>
-    {{-- Keperluan Tombol DataTables --}}
-    <link rel="stylesheet" href="{{ asset('js/plugins/datatables-buttons-bs5/css/buttons.bootstrap5.min.css') }}">
-    <script src="{{ asset('js/plugins/datatables-buttons/dataTables.buttons.min.js') }}"></script>
-    <script src="{{ asset('js/plugins/datatables-buttons-bs5/js/buttons.bootstrap5.min.js') }}"></script>
-    <script src="{{ asset('js/plugins/datatables-buttons-pdfmake/pdfmake.min.js') }}"></script>
-    <script src="{{ asset('js/plugins/datatables-buttons/buttons.html5.min.js') }}"></script>
-    <script src="{{ asset('js/plugins/datatables-buttons-pdfmake/vfs_fonts.js') }}"></script>
     {{-- Keperluan Pilih Bulan Tahun --}}
     <link rel="stylesheet" href="{{ asset('js/plugins/bootstrap-datepicker/css/bootstrap-datepicker.min.css') }}">
     <script src="{{ asset('js/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js') }}"></script>
@@ -123,36 +116,6 @@
                 endDate: new Date(new Date().setDate(new Date().getMonth())),
             });
             var table = $('.table').DataTable({
-                dom: 'Bfrtip',
-                buttons: [{
-                    extend: 'pdfHtml5',
-                    text: 'Export Data ke PDF',
-                    exportOptions: {
-                        columns: [0, 1, 2, 3],
-                    },
-                    customize: function(doc) {
-                        // Hitung total laba
-                        var totalLaba = 0;
-                        table.column(4, { page: 'current' }).data().each(function(value) {
-                            totalLaba += parseInt(value.replace(/\D/g, ''), 10);
-                        });
-                        // Hitung laba kotor (60%)
-                        var labaKotor = (totalLaba * 60) / 100;
-                        // Hitung laba bersih (40%)
-                        var labaBersih = (totalLaba * 40) / 100;
-
-                        // Tambahkan elemen-elemen ke PDF
-                        doc.content.splice(1, 0, {
-                            text: [
-                                'Total Laba: Rp' + $.fn.dataTable.render.number(',', '.', 0).display(totalLaba),
-                                'Laba Kotor (60%): Rp' + $.fn.dataTable.render.number(',', '.', 0).display(labaKotor),
-                                'Laba Bersih (40%): Rp' + $.fn.dataTable.render.number(',', '.', 0).display(labaBersih),
-                            ],
-                            margin: [0, 0, 0, 12],
-                            alignment: 'right'
-                        });
-                    }
-                }],
                 language: {
                     lengthMenu: "Tampilkan _MENU_ data per halaman",
                     zeroRecords: "Data tidak ditemukan.",
@@ -170,8 +133,6 @@
                 lengthChange: false,
                 paging: false,
             });
-
-            table.buttons().container().appendTo('#example_wrapper .col-md-6:eq(0)');
         });
     </script>
 @endsection

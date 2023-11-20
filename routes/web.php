@@ -54,4 +54,5 @@ Route::middleware('auth')->group(function() {
     Route::get('laporan', [LaporanController::class, 'index'])->name('laporan_view');
     Route::get('laporan/mingguan', [LaporanController::class, 'mingguan'])->name('laporan_view_mingguan');
     Route::get('laporan/bulanan', [LaporanController::class, 'bulanan'])->name('laporan_view_bulanan');
+    Route::get('laporan/download', [LaporanController::class, 'laporanPDF'])->name('laporan_download');
 });
