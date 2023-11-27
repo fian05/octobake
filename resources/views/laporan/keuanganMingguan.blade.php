@@ -79,7 +79,13 @@
                     Laporan Keuangan: {{ $dateRangeString }}
                 </h3>
                 <div class="block-options">
-                    {{-- <a role="button" id="btnPDF" class="btn text-primary btn-block-option" data-bs-toggle="modal" data-bs-target="#modal"><i class="fa fa-download"></i> PDF</a> --}}
+                    <form action="{{ route('laporan_download') }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="jenis_laporan" value="mingguan" required>
+                        <input type="hidden" name="kurun_waktu_awal" value="{{ $startDate }}" required>
+                        <input type="hidden" name="kurun_waktu_akhir" value="{{ $endDate }}" required>
+                        <button type="submit" class="btn text-primary btn-block-option" title="Export Laporan ke PDF"><i class="fa fa-download"></i> Download</button>
+                    </form>
                 </div>
             </div>
             <div class="block-content">
@@ -87,13 +93,13 @@
                     <table id="example" class="table table-bordered table-striped table-vcenter">
                         <thead>
                             <tr>
-                                <th>No.</th>
-                                <th>Tanggal Pembelian</th>
-                                <th>Nama Produk</th>
-                                <th>Harga Satuan</th>
-                                <th>Jumlah Dibeli</th>
-                                <th>Diskon</th>
-                                <th>Total</th>
+                                <th style="text-align: center;">No.</th>
+                                <th style="text-align: center;">Tanggal Pembelian</th>
+                                <th style="text-align: center;">Nama Produk</th>
+                                <th style="text-align: center;">Harga Satuan</th>
+                                <th style="text-align: center;">Jumlah Dibeli</th>
+                                <th style="text-align: center;">Diskon</th>
+                                <th style="text-align: center;">Total</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -102,25 +108,25 @@
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $pembelian->tanggal_pembelian }} WIB</td>
                                     <td>{{ $pembelian->nama_produk }}</td>
-                                    <td>Rp{{ number_format($pembelian->harga_satuan, 0, ',', '.') }}</td>
-                                    <td>{{ $pembelian->jumlah_dibeli }}</td>
-                                    <td>{{ $pembelian->diskon }}%</td>
-                                    <td>Rp{{ number_format($pembelian->total, 0, ',', '.') }}</td>
+                                    <td style="text-align: right;">Rp{{ number_format($pembelian->harga_satuan, 0, ',', '.') }}</td>
+                                    <td style="text-align: center;">{{ $pembelian->jumlah_dibeli }} produk</td>
+                                    <td style="text-align: center;">{{ $pembelian->diskon }}%</td>
+                                    <td style="text-align: right;">Rp{{ number_format($pembelian->total, 0, ',', '.') }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
                         <tfoot>
                             <tr>
-                                <th colspan="6">Total</th>
-                                <th id="total">Rp{{ number_format($totalLaba, 0, ',', '.') }}</th>
+                                <th colspan="6">Jumlah</th>
+                                <th id="total" style="text-align: right;">Rp{{ number_format($totalLaba, 0, ',', '.') }}</th>
                             </tr>
                             <tr>
                                 <th colspan="6">60%</th>
-                                <th id="laba-kotor">Rp{{ number_format($labaKotor, 0, ',', '.') }}</th>
+                                <th id="laba-kotor" style="text-align: right;">Rp{{ number_format($labaKotor, 0, ',', '.') }}</th>
                             </tr>
                             <tr>
                                 <th colspan="6">40%</th>
-                                <th id="laba-bersih">Rp{{ number_format($labaBersih, 0, ',', '.') }}</th>
+                                <th id="laba-bersih" style="text-align: right;">Rp{{ number_format($labaBersih, 0, ',', '.') }}</th>
                             </tr>
                         </tfoot>
                     </table>
@@ -135,6 +141,7 @@
     <script>
         $(document).ready(function() {
             var table = $('.table').DataTable({
+                ordering: false,
                 language: {
                     lengthMenu: "Tampilkan _MENU_ data per halaman",
                     zeroRecords: "Data tidak ditemukan.",

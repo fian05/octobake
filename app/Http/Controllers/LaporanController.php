@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
+use App\Models\Toko;
 use App\Models\Pembelian;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf as PDF;
 
 class LaporanController extends Controller
 {
@@ -58,169 +60,161 @@ class LaporanController extends Controller
         return view('laporan.keuanganBulanan', compact('pembelians', 'bulan_tahun', 'totalLaba', 'labaKotor', 'labaBersih'));
     }
 
-    // public function pdf(Request $request) {
-    //     $namaBulan = array(
-    //         1 => 'Januari',
-    //         2 => 'Februari',
-    //         3 => 'Maret',
-    //         4 => 'April',
-    //         5 => 'Mei',
-    //         6 => 'Juni',
-    //         7 => 'Juli',
-    //         8 => 'Agustus',
-    //         9 => 'September',
-    //         10 => 'Oktober',
-    //         11 => 'November',
-    //         12 => 'Desember',
-    //     );
-        
-    //     // Ambil data dari method index
-    //     $aplikasi = $this->index($request)->aplikasi;
-    //     $reqSistem = $this->index($request)->reqSistem;
-    //     $reqBulanTahun = $this->index($request)->reqBulanTahun;
-    //     $sistemDipilih = $this->index($request)->sistemDipilih;
- 
-    //     // Eksekusi PDF
-    //     $pdf = App::make('dompdf.wrapper');
-    //     $dompdf = $pdf->getDomPDF()->setPaper('A4', 'portrait');
-    //     $canvas = $dompdf->get_canvas();
-    //     $canvas->page_text(437.8, 784.77, "{PAGE_NUM} of {PAGE_COUNT}", null, 8.1, array(0, 0, 0));
-    //     $output = '
-    //     <html>
-    //         <head>
-    //             <style>
-    //             @page { margin: 190px 96px 120px 96px; }
-    //             // @page { margin: 230px 37px 90px 37px; }
-    //             body { font-family: sans-serif; }
-    //             header { position: fixed; top: -130px; left: 0px; right: 0px; }
-    //             main { margin-left: 8px; margin-right: 8px; }
-    //             footer { position: fixed; bottom: -60px; left: 0px; right: 0px; }
-    //             </style>
-    //         </head>
-    //         <body>
-    //             <header>
-    //                 <table style="border-collapse: collapse; border-spacing: 0; width: 100%; background: #f7f7f7; border: 2px solid black">
-    //                     <tr>
-    //                         <td style="border: 1px solid black; text-align: center; width: 20%;"><img width="90%" src="'.public_path("creative/img/inka/cropped-logo3.png").'"></td>
-    //                         <td style="border: 1px solid black; text-align: center; width: 60%;"><h4 style="margin: 1px;">REPORT</h4><h4 style="margin: 10px; font-style: italic; font-size: 14px;">Penggunaan '.($reqSistem != null ? "Sistem Aplikasi ".$reqSistem : "Semua Sistem Aplikasi").'</h4><h4 style="margin: 10px; font-style: italic; font-size: 14px;">'.$namaBulan[date("n", strtotime($reqBulanTahun))].' '.date("Y", strtotime($reqBulanTahun)).'</h4></td>
-    //                         <td style="border: 1px solid black; text-align: center; width: 20%;"><img width="90%" src="'.public_path("creative/img/inka/logo_ti.jpeg").'"></td>
-    //                     </tr>
-    //                 </table>
-    //             </header>
-    //             <footer>
-    //                 <table style="border-collapse: collapse; border-spacing: 0; width: 100%; background: #f7f7f7; border: 2px solid black">
-    //                     <tr>
-    //                         <td style="border: 1px solid black; width: 20%; font-size: 11px;">&nbsp; Last changed on:</td>
-    //                         <td style="border: 1px solid black; width: 60%; font-size: 11px;">&nbsp; File Name:</td>
-    //                         <td style="border: 1px solid black; width: 20%; font-size: 11px;">&nbsp; Page:</td>
-    //                     </tr>
-    //                     <tr>
-    //                         <td style="border: 1px solid black; width: 20%; font-size: 11px;">&nbsp; '.date("d/m/Y").'</td>
-    //                         <td style="border: 1px solid black; width: 60%; font-size: 11px;">&nbsp; Penggunaan '.($reqSistem != null ? "Sistem Aplikasi ".$reqSistem : "Semua Sistem Aplikasi").'</td>
-    //                         <td style="border: 1px solid black; width: 20%; font-size: 11px; color: red;">&nbsp; </td>
-    //                     </tr>
-    //                 </table>
-    //             </footer>
-    //             <main>
-    //                 <div style="float: left; width: 50%; padding: 5px;">
-    //                     <img src="'.public_path("").'/chartAuth.png" width="96%">
-    //                 </div>
-    //                 <div style="float: left; width: 50%; padding: 5px;">
-    //                     <img src="'.public_path("").'/chartTrans.png" width="96%">
-    //                 </div><br>
-    //                 <h4 align="center" style="font-size: 14px;">Daftar Users</h4>
-    //                 <table width="99.5%" style="border-collapse: collapse; border: 0px; margin: auto">
-    //                     <tr>
-    //                         <th style="border: 1px solid; padding: 6px; font-size: 12px;" width="30%">Username</th>
-    //                         <th style="border: 1px solid; padding: 6px; font-size: 12px;" width="30%">Divisi</th>
-    //                         <th style="border: 1px solid; padding: 6px; font-size: 12px;" width="40%">Waktu</th>
-    //                     </tr>';  
-    //                     foreach($sistemDipilih as $users) {
-    //                     $output .= '
-    //                     <tr>
-    //                         <td style="border: 1px solid; padding: 5px; font-size: 12px;">&nbsp; '.$users->username.'</td>
-    //                         <td style="border: 1px solid; padding: 5px; font-size: 12px;">&nbsp; '.$users->division.'</td>
-    //                         <td style="border: 1px solid; padding: 5px; font-size: 12px;">&nbsp; '.\Carbon\Carbon::parse($users->event_at)->format("d M Y H:i:s").'</td>
-    //                     </tr>';
-    //                     }
-    //                     $output .= '
-    //                 </table>
-    //                 <!-- <p style="font-size: 12px;">Total: '.$sistemDipilih->count().' Data.</p> -->
-    //             </main>
-    //         </body>
-    //     </html>';
-    //     $pdf->loadHTML($output);
+    public function laporanPDF(Request $request) {
+        switch($request->jenis_laporan) {
+            case 'harian':
+                $tanggal = $request->tanggal;
+                $pembelians = Pembelian::whereDate('tanggal_pembelian', $tanggal)->get();
+                $totalLaba = Pembelian::whereDate('tanggal_pembelian', $tanggal)->sum('total');
+                $labaKotor = ($totalLaba * 60) / 100;
+                $labaBersih = ($totalLaba * 40) / 100;
+                $tanggal = date('d F Y', strtotime($tanggal));
+                break;
+            case 'mingguan':
+                $startDate = $request->kurun_waktu_awal;
+                $endDate = $request->kurun_waktu_akhir;
+                $pembelians = Pembelian::whereBetween('tanggal_pembelian', [
+                    Carbon::createFromFormat('Y-m-d', $startDate)->startOfDay(),
+                    Carbon::createFromFormat('Y-m-d', $endDate)->endOfDay()
+                ])->get();
+                $totalLaba = $pembelians->sum('total');
+                $labaKotor = ($totalLaba * 60) / 100;
+                $labaBersih = ($totalLaba * 40) / 100;
+                
+                $startDay = date('d', strtotime($startDate));
+                $startMonth = date('F', strtotime($startDate));
+                $startYear = date('Y', strtotime($startDate));
+                $endDay = date('d', strtotime($endDate));
+                $endMonth = date('F', strtotime($endDate));
+                $endYear = date('Y', strtotime($endDate));
+                if($startYear == $endYear) { // if 2023 == 2023
+                    if($startMonth == $endMonth) { // if November == November
+                        $tanggal = $startDay.' - '.$endDay.' '.$endMonth.' '.$endYear; // 5 - 11 November 2023
+                    } else { // if October != November
+                        $tanggal = $startDay.' '.$startMonth.' - '.$endDay.' '.$endMonth.' '.$endYear; // 29 October - 4 November 2023
+                    }
+                } else { // if 2022 != 2023
+                    $tanggal = $startDay.' '.$startMonth.' '.$startYear.' - '.$endDay.' '.$endMonth.' '.$endYear; // 31 December 2022 - 1 January 2023
+                }
+                break;
+            case 'bulanan':
+                $tanggal = $request->bulan_tahun;
+                list($tahun, $bulan) = explode('-', $tanggal);
+                $pembelians = Pembelian::whereYear('tanggal_pembelian', $tahun)
+                    ->whereMonth('tanggal_pembelian', $bulan)
+                    ->get();
+                $totalLaba = Pembelian::whereYear('tanggal_pembelian', $tahun)
+                    ->whereMonth('tanggal_pembelian', $bulan)
+                    ->sum('total');
+                $labaKotor = ($totalLaba * 60) / 100;
+                $labaBersih = ($totalLaba * 40) / 100;
+                $tanggal = date('F Y', strtotime($tanggal));
+                break;
+            default:
+                $tanggal = now()->format('Y-m-d');
+                $pembelians = Pembelian::whereDate('tanggal_pembelian', $tanggal)->get();
+                $totalLaba = Pembelian::whereDate('tanggal_pembelian', $tanggal)->sum('total');
+                $labaKotor = ($totalLaba * 60) / 100;
+                $labaBersih = ($totalLaba * 40) / 100;
+                $tanggal = date('d F Y', strtotime($tanggal));
+                break;
+        }
+        $toko = Toko::first();
+        $output = '
+            <html>
+            <head>
+                <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+                <style>
+                    @page { size: A4 portrait; }
+                    html { margin: 1cm 2cm; }
+                    body { max-width: 21cm; font-family: sans-serif; }
+                    .page-break {
+                        page-break-after: always;
+                    }
+                </style>
+            </head>
+            <body>
+                <table style="border-collapse: collapse; border-spacing: 0; width: 100%; text-align: center; border-bottom: 2px solid black;">
+                    <tr></tr>
+                        <td><img src="'.public_path("media/photos/upload/$toko->logo_toko").'" style="width: 100px; padding-bottom: 7px;"></td>
+                        <td>
+                            <h1 style="margin: 0;">'.strtoupper($toko->nama_toko).'</h1>
+                            <h5 style="margin: 0;">'.strtoupper($toko->alamat_toko).'</h5>
+                            <h5 style="margin: 0;">'.strtoupper("WhatsApp: 0".$toko->nohp_toko." | Instagram: ".$toko->ig_toko).'</h5>
+                        </td>
+                    </tr>
+                </table>
+                <h4>Laporan Penjualan '.($request->jenis_laporan != 'bulanan' ? ($request->jenis_laporan == 'harian' ? 'Tanggal '.$tanggal : $tanggal) : 'Bulan '.$tanggal).'</h4>
+                <table style="border-collapse: collapse; border-spacing: 0; width: 100%; border: 2px solid black; font-size: 10pt;">
+                    <thead style="background: #f7f7f7;">
+                        <tr>
+                            <th style="border: 1px solid black; padding: 3px;">No.</th>
+                            '.($request->jenis_laporan != 'harian' ? '<th style="border: 1px solid black; padding: 3px;">Tanggal Pembelian</th>' : '').'
+                            <th style="border: 1px solid black; padding: 3px;">Nama Produk</th>
+                            <th style="border: 1px solid black; padding: 3px;">Harga Satuan</th>
+                            <th style="border: 1px solid black; padding: 3px;">Jumlah Dibeli</th>
+                            <th style="border: 1px solid black; padding: 3px;">Diskon</th>
+                            <th style="border: 1px solid black; padding: 3px;">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>';
+        $no = 1;
+        foreach($pembelians as $pembelian) {
+            $output .= '
+                        <tr>
+                            <td style="border: 1px solid black; padding: 3px; text-align: center;">'.$no++.'</td>
+                            '.($request->jenis_laporan != 'harian' ? '<td style="border: 1px solid black; padding: 3px;">'.$pembelian->tanggal_pembelian.' WIB</td>' : '').'
+                            <td style="border: 1px solid black; padding: 5px">'.$pembelian->nama_produk.'</td>
+                            <td style="border: 1px solid black; padding: 3px; text-align: right;">Rp'.number_format($pembelian->harga_satuan, 0, ',', '.').'</td>
+                            <td style="border: 1px solid black; padding: 3px; text-align: center;">'.$pembelian->jumlah_dibeli.' produk</td>
+                            <td style="border: 1px solid black; padding: 3px; text-align: center;">'.$pembelian->diskon.'%</td>
+                            <td style="border: 1px solid black; padding: 3px; text-align: right;">Rp'.number_format($pembelian->total, 0, ',', '.').'</td>
+                        </tr>';
+        }
+        $output .= '
+                    </tbody>
+                    <tfoot style="background: #f7f7f7;">
+                        <tr>
+                            <td colspan="'.($request->jenis_laporan != 'harian' ? 6 : 5).'" style="font-weight: bold; padding: 3px; border: 1px solid black;">Jumlah</td>
+                            <td id="total" style="font-weight: bold; padding: 3px; border: 1px solid black; text-align: right;">Rp'.number_format($totalLaba, 0, ',', '.').'</td>
+                        </tr>
+                        <tr>
+                            <td colspan="'.($request->jenis_laporan != 'harian' ? 6 : 5).'" style="font-weight: bold; padding: 3px; border: 1px solid black;">60%</td>
+                            <td style="font-weight: bold; padding: 3px; border: 1px solid black; text-align: right;">Rp'.number_format($labaKotor, 0, ',', '.').'</td>
+                        </tr>
+                        <tr>
+                            <td colspan="'.($request->jenis_laporan != 'harian' ? 6 : 5).'" style="font-weight: bold; padding: 3px; border: 1px solid black;">40%</td>
+                            <td style="font-weight: bold; padding: 3px; border: 1px solid black; text-align: right;">Rp'.number_format($labaBersih, 0, ',', '.').'</td>
+                        </tr>
+                    </tfoot>';
+        $alamatParts = explode(',', $toko->alamat_toko);
+        $namaKota = trim(end($alamatParts));
+        $output .= '
+                </table>
+                <div style="height: 30px;"></div>
+                <table style="float: right">
+                    <tr style="text-align: right">
+                        <td colspan="2">
+                            '.$namaKota.', '.date("d F Y").'<br>
+                            <div style="height: 100px;"></div>
+                            <u>( Owner )</u>
+                        </td>
+                    </tr>
+                </table>
+            </body>
+            </html>';
+        $pdf = PDF::loadHTML($output)->setPaper('A4', 'portrait');
+        $pdf->output();
+        // $domPdf = $pdf->getDomPDF();
+        // $canvas = $domPdf->getCanvas();
+        // $pageHeight = $canvas->get_height();
+        // $pageWidth = $canvas->get_width();
+        // $marginHorizontal = 2 * 72; // Mengonversi margin dalam cm ke pt (1 cm = 28.35 pt)
+        // $marginVertical = 1 * 72;
+        // $y = $pageHeight - $marginVertical;
+        // $canvas->page_text($pageWidth/2, $y, "{PAGE_NUM} of {PAGE_COUNT}", null, 12, array(0, 0, 0));
 
-    //     $return = $pdf->download("mLogs ".($reqSistem != null ? $reqSistem : "Semua Aplikasi")." ".$reqBulanTahun." at ".date("Y-m-d H i s"));
-
-    //     unlink(public_path("")."/chartAuth.png");
-    //     unlink(public_path("")."/chartTrans.png");
-
-    //     return $return;
-    // }
-
-    // public function laporanPDF() {
-    //     $output = '
-    //         <html>
-    //         <head>
-    //             <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    //             <style>
-    //                 body { font-family: sans-serif; }
-    //             </style>
-    //         </head>
-    //         <body>
-    //             <h2 align="center">Laporan Penjualan</h2>
-    //             <h4 align="center">Desa Mojorayung, Kecamatan Wungu, Kabupaten Madiun</h4>
-    //             <hr style="border-color: black;">
-    //             <h3 align="center">LAPORAN</h3>
-    //             <table style="border-collapse: collapse; border-spacing: 0; width: 100%; border: 2px solid black">
-    //                 <thead style="background: #f7f7f7;">
-    //                     <tr>
-    //                         <th style="border: 1px solid black; padding: 10px;">Tanggal Pesan</th>
-    //                         <th style="border: 1px solid black; padding: 10px;">Nama Pelanggan</th>
-    //                         <th style="border: 1px solid black; padding: 10px;">Nama Produk</th>
-    //                         <th style="border: 1px solid black; padding: 10px;">Jumlah</th>
-    //                         <th style="border: 1px solid black; padding: 10px;">Total Harga</th>
-    //                     </tr>
-    //                 </thead>
-    //                 <tbody>';
-    //     $output .= '
-    //                     <tr>
-    //                         <td style="border: 1px solid black; padding: 10px">1</td>
-    //                         <td style="border: 1px solid black; padding: 10px">2</td>
-    //                         <td style="border: 1px solid black; padding: 10px">3</td>
-    //                         <td style="border: 1px solid black; padding: 10px">4 unit</td>
-    //                         <td style="border: 1px solid black; padding: 10px">5</td>
-    //                     </tr>';
-    //     $output .= '
-    //                 </tbody>
-    //                 <tfoot style="background: #f7f7f7;">
-    //                     <tr>
-    //                         <td colspan="4" style="font-weight: bold; padding: 10px; border: 1px solid black;">Jumlah Semua Produk yang Terjual</td>
-    //                         <td style="font-weight: bold; padding: 10px; border: 1px solid black;">10 unit</td>
-    //                     </tr>
-    //                     <tr>
-    //                         <td colspan="4" style="font-weight: bold; padding: 10px; border: 1px solid black;">Total Pendapatan Tahun 2023</td>
-    //                         <td style="font-weight: bold; padding: 10px; border: 1px solid black;">10JT</td>
-    //                     </tr>
-    //                 </tfoot>';
-    //     $output .= '
-    //             </table><br><br>
-
-    //             <table style="float: right">
-    //                 <br><br>
-    //                 <tr style="text-align: right">
-    //                     <td colspan="2">
-    //                         Madiun, 12345<br>
-    //                         <br>TTD<br><br>
-    //                         <u>( Owner )</u>
-    //                     </td>
-    //                 </tr>
-    //             </table>
-    //         </body>
-    //         </html>';
-
-    //     return Pdf::loadHtml($output)->setPaper('A4', 'portrait')->stream('Laporan Penjualan '.date("Y-m-d H-i-s").'.pdf', array('Attachment' => 0));
-
-    // }
+        return $pdf->stream('Laporan Penjualan '.$toko->nama_toko.' '.$tanggal.'.pdf', array('Attachment' => false));
+        // return $pdf->download('Laporan Penjualan '.$toko->nama_toko.' '.$tanggal.'.pdf');
+    }
 }

@@ -43,10 +43,6 @@
                 </a>
                 @if (Auth::user()->role == 'owner')
                     <li class="nav-main-heading">Laporan</li>
-                    <a class="nav-main-link" href="{{ route('laporan_download') }}" target="_blank">
-                        <i class="nav-main-link-icon fa fa-money-check-dollar"></i>
-                        <span class="nav-main-link-name">Download</span>
-                    </a>
                     <li class="nav-main-item">
                         <a role="button" class="nav-main-link nav-main-link-submenu" data-toggle="submenu" aria-haspopup="true" aria-expanded="false">
                             <i class="nav-main-link-icon fa fa-money-check-dollar"></i>
