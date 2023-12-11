@@ -21,27 +21,26 @@
                         <i class="nav-main-link-icon si si-speedometer"></i>
                         <span class="nav-main-link-name">Dashboard</span>
                     </a>
-                <li class="nav-main-heading">Manajemen Data</li>
-                @if (Auth::user()->role == 'owner')
-                    <a class="nav-main-link" href="{{ route('toko_view') }}">
-                        <i class="nav-main-link-icon fa fa-store"></i>
-                        <span class="nav-main-link-name">Toko</span>
+                    <li class="nav-main-heading">Manajemen Data</li>
+                    @if (Auth::user()->role == 'owner')
+                        <a class="nav-main-link" href="{{ route('toko_view') }}">
+                            <i class="nav-main-link-icon fa fa-store"></i>
+                            <span class="nav-main-link-name">Toko</span>
+                        </a>
+                        <a class="nav-main-link" href="{{ route('karyawan_view') }}">
+                            <i class="nav-main-link-icon fa fa-users"></i>
+                            <span class="nav-main-link-name">Karyawan</span>
+                        </a>
+                    @endif
+                    <a class="nav-main-link" href="{{ route('produk_view') }}">
+                        <i class="nav-main-link-icon fa fa-bread-slice"></i>
+                        <span class="nav-main-link-name">Produk</span>
                     </a>
-                    <a class="nav-main-link" href="{{ route('karyawan_view') }}">
-                        <i class="nav-main-link-icon fa fa-users"></i>
-                        <span class="nav-main-link-name">Karyawan</span>
+                    <li class="nav-main-heading">Transaksi</li>
+                    <a class="nav-main-link" href="{{ route('pembelian_view') }}">
+                        <i class="nav-main-link-icon fa fa-money-check-dollar"></i>
+                        <span class="nav-main-link-name">Pembelian</span>
                     </a>
-                @endif
-                <a class="nav-main-link" href="{{ route('produk_view') }}">
-                    <i class="nav-main-link-icon fa fa-bread-slice"></i>
-                    <span class="nav-main-link-name">Produk</span>
-                </a>
-                <li class="nav-main-heading">Transaksi</li>
-                <a class="nav-main-link" href="{{ route('pembelian_view') }}">
-                    <i class="nav-main-link-icon fa fa-money-check-dollar"></i>
-                    <span class="nav-main-link-name">Pembelian</span>
-                </a>
-                @if (Auth::user()->role == 'owner')
                     <li class="nav-main-heading">Laporan</li>
                     <li class="nav-main-item">
                         <a role="button" class="nav-main-link nav-main-link-submenu" data-toggle="submenu" aria-haspopup="true" aria-expanded="false">
@@ -66,7 +65,6 @@
                             </li>
                         </ul>
                     </li>
-                @endif
                 </li>
             </ul>
         </div>
