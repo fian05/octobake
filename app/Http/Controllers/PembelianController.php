@@ -44,22 +44,31 @@ class PembelianController extends Controller
         } else {
             $produk = Produk::findOrFail($request->nama_produk);
             if($produk) {
-                $produk->update([
-                    "stok_produk" => $produk->stok_produk-$request->jumlah_dibeli,
-                ]);
-                Pembelian::create([
-                    "nama_produk" => $produk->nama_produk,
-                    "harga_satuan" => $request->harga_satuan,
-                    "jumlah_dibeli" => $request->jumlah_dibeli,
-                    "diskon" => $request->diskon,
-                    "total" => $request->total,
-                    "tanggal_pembelian" => $request->tanggal_pembelian,
-                ]);
-                Session::flash('alert', [
-                    'type' => 'success',
-                    'title' => 'Data Berhasil Ditambahkan',
-                    'message' => "",
-                ]);
+                $hasil = $produk->stok_produk-$request->jumlah_dibeli;
+                if($hasil >= 0) {
+                    $produk->update([
+                        "stok_produk" => $produk->stok_produk-$request->jumlah_dibeli,
+                    ]);
+                    Pembelian::create([
+                        "nama_produk" => $produk->nama_produk,
+                        "harga_satuan" => $request->harga_satuan,
+                        "jumlah_dibeli" => $request->jumlah_dibeli,
+                        "diskon" => $request->diskon,
+                        "total" => $request->total,
+                        "tanggal_pembelian" => $request->tanggal_pembelian,
+                    ]);
+                    Session::flash('alert', [
+                        'type' => 'success',
+                        'title' => 'Data Berhasil Ditambahkan',
+                        'message' => "",
+                    ]);
+                } else {
+                    Session::flash('alert', [
+                        'type' => 'error',
+                        'title' => 'Data Gagal Ditambahkan',
+                        'message' => 'Jumlah produk yang dibeli melebihi stok!',
+                    ]);
+                }
             } else {
                 Session::flash('alert', [
                     'type' => 'error',
